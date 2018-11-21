@@ -79,4 +79,5 @@ def register(request):
 @login_required
 def manage(request):
     context = {}
+    context['select'] = "manage"
     return render(request, "user_info/manage.html", context=context)
