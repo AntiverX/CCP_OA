@@ -1,0 +1,45 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#upload_image").click(function () {
+                $("#image").click();
+            });
+        });
+
+    </script>
+    <style>
+        #upload_image {
+            cursor: pointer
+        }
+    </style>
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+            </div>
+
+            <div class="navbar-right">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'activityInfo' %}" style="color: #8a1010;">我的活动</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link select" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+
+    </div>
+    <div class="container header">
+        <div class="table-responsive">
+
+        </div>
+    </div>
+{% endblock %}
