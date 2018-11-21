@@ -22,7 +22,7 @@ from main_site import views
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'activity/', include('activity.urls')),
-    url(r'joueney/', include('journey.urls')),
+    url(r'journey/', include('journey.urls')),
     url(r'user_info/', include('user_info.urls')),
     url(r'system/', include('main_site.urls')),
     url(r'^$', views.index, name="index"),
