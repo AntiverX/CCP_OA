@@ -1,10 +1,11 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from .models import User, CcpMember
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from CCP.settings import BASE_DIR
 import random
-
+import pandas as pd
+from django.db import transaction
 
 @login_required
 def index(request):
@@ -83,8 +84,32 @@ def account_manage(request):
     context['results'] = User.objects.all()
     return render(request, "user_info/account_manage.html", context=context)
 
+@transaction.atomic
 def user_info_manage(request):
     context = {}
-    context['select'] = "manage"
-    context['results'] = CcpMember.objects.all()
-    return render(request, "user_info/user_info_manage.html", context=context)
+    if request.method == "GET":
+        context['select'] = "manage"
+        context['results'] = CcpMember.objects.all()
+        return render(request, "user_info/user_info_manage.html", context=context)
+    else:
+        with transaction.atomic():
+            CcpMember.objects.all().delete()
+            file = request.FILES.get('file')
+            if file is not None:
+                file_name = BASE_DIR + "/static/cache/" + "user_info.xlsx"
+                with open(file_name.encode(), "wb+") as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                data = pd.read_excel(file_name)
+                for index, row in data.iterrows():
+                    new_ccp_member = CcpMember.objects.create(
+                        student_id=row['学号'],
+                        real_name=row['姓名'],
+                        branch=row['党支部'],
+                        current_state=row['面貌'],
+                        phone_number=row['联系电话'],
+                        date=row['入党时间'],
+                        sponsor=row['入党介绍人'],
+                    )
+                    new_ccp_member.save()
+                return HttpResponseRedirect("/user_info/user_info_manage/")

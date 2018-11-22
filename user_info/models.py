@@ -79,13 +79,7 @@ class CcpMember(models.Model):
     branch = models.TextField(default="Default")
     current_state = models.TextField(default="Default")
     phone_number = models.TextField(default="Default")
-    # 通过院党课时间
-    level_1 = models.DateTimeField(default="Default")
-    # 通过校党课时间
-    level_2 = models.DateTimeField(default="Default")
-    # 入党申请书提交时间
-    date_1 = models.DateTimeField(default="Default")
     # 入党时间
-    date_2 = models.DateTimeField(default="Default")
+    date = models.DateField()
     # 介绍人
     sponsor = models.TextField(default="Default")
