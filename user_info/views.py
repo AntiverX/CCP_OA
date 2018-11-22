@@ -77,7 +77,14 @@ def register(request):
 
 
 @login_required
-def manage(request):
+def account_manage(request):
     context = {}
     context['select'] = "manage"
-    return render(request, "user_info/manage.html", context=context)
+    context['results'] = User.objects.all()
+    return render(request, "user_info/account_manage.html", context=context)
+
+def user_info_manage(request):
+    context = {}
+    context['select'] = "manage"
+    context['results'] = CcpMember.objects.all()
+    return render(request, "user_info/user_info_manage.html", context=context)

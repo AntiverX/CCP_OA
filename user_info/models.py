@@ -87,5 +87,5 @@ class CcpMember(models.Model):
     date_1 = models.DateTimeField(default="Default")
     # 入党时间
     date_2 = models.DateTimeField(default="Default")
-    # 入党时间
+    # 介绍人
     sponsor = models.TextField(default="Default")
