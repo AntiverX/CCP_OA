@@ -1,5 +1,53 @@
 {% extends "main_site/base.html" %}
 {% block content %}
+    <script>
+        $(document).ready(function () {
+            /* 点击某一行显示修改和删除按钮 */
+            $("tbody tr").click(function () {
+
+                $("#target_id").val(this.title);
+                $(".operation").attr("hidden", false);
+                if ($("tr").hasClass("table-active")) {
+                    $("tr").removeClass("table-active");
+                }
+                $(this).addClass("table-active");
+                var target_id = $("#target_id").val();
+                var username = $("tr[title=" + target_id + "]").find("td").eq(0).text();
+                var email = $("tr[title=" + target_id + "]").find("td").eq(1).text();
+                var real_name = $("tr[title=" + target_id + "]").find("td").eq(2).text();
+                var student_id = $("tr[title=" + target_id + "]").find("td").eq(3).text();
+                var is_admin = $("tr[title=" + target_id + "]").find("td").eq(4).text();
+                $("#username").val(username);
+                $("#email").val(email);
+                $("#real_name").val(real_name);
+                $("#student_id").val(student_id);
+                $("#is_admin").val(is_admin);
+            });
+            $("#deleteInfo").click(function () {
+                $("#btn").val("delete");
+                $("#form").submit();
+            });
+
+            /* 点击空白处失去选中，并清空id记录 */
+            $(document).on("click", function (e) {
+                if (e.target.tagName != "TH" && e.target.tagName !== "TD" && e.target.tagName !== "A") {
+                    $("#target_id").val();
+                    $(".operation").attr("hidden", true);
+                    if ($("tr").hasClass("table-active")) {
+                        $("tr").removeClass("table-active");
+                    }
+                }
+            });
+        });
+
+
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1100px;
+            max-width: 1100px;
+        }
+    </style>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -7,14 +55,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" id="upload_image">添加</a>
+                    <li class="nav-item operation" hidden>
+                        <a class="nav-link" id="submitInfo" data-toggle="modal" id="modifyInfo" data-target="#exampleModalCenter">修改</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="modifyInfo">批量添加</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="submitInfo">修改</a>
+                    <li class="nav-item operation" hidden>
+                        <a class="nav-link" id="deleteInfo">删除</a>
                     </li>
                 </ul>
             </div>
@@ -42,6 +87,61 @@
             </div>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">账号</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="target_id" class="form-control" name="target_id" value="{{ target_id }}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="form-group col-3">
+                                <label for="content">账号</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="content">邮箱</label>
+                                <input type="text" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="expected_result">姓名</label>
+                                <input type="text" class="form-control" id="real_name" name="real_name" required>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="content">学号</label>
+                                <input type="text" class="form-control" id="student_id" name="student_id" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-2">
+                                <label for="content">管理员</label>
+                                <select class="form-control" name="is_admin" id="is_admin">
+                                    <option vale="1">是</option>
+                                    <option vale="0">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-danger" id="submitForm" value="submit">提交</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="btn" name="btn" value="submit">
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <div class="container header">

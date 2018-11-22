@@ -15,21 +15,20 @@
                         <a class="nav-link" href="{% url 'journey' %}" style="color: #8a1010">系统设置</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;font-weight: bold">账号管理</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">信息管理</a>
                     </li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
-                        </li>
-                        {% if user.is_admin %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
+                    </li>
                 </ul>
             </div>
         </nav>

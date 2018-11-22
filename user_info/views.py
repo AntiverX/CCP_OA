@@ -7,6 +7,7 @@ import random
 import pandas as pd
 from django.db import transaction
 
+
 @login_required
 def index(request):
     if request.method == "GET":
@@ -79,12 +80,18 @@ def register(request):
 
 @login_required
 def account_manage(request):
-    context = {}
-    context['select'] = "manage"
-    context['results'] = User.objects.all()
-    return render(request, "user_info/account_manage.html", context=context)
+    if request.method == "GET":
+        context = {}
+        context['select'] = "manage"
+        context['results'] = User.objects.all()
+        return render(request, "user_info/account_manage.html", context=context)
+    else:
+        if request.POST['btn'] == "delete":
+            target_id = request.POST['target_id']
+            user = User.objects.get(id=target_id)
+            user.delete()
+        return HttpResponseRedirect("http://127.0.0.1:8000/user_info/account_manage/")
 
-@transaction.atomic
 def user_info_manage(request):
     context = {}
     if request.method == "GET":
@@ -92,10 +99,10 @@ def user_info_manage(request):
         context['results'] = CcpMember.objects.all()
         return render(request, "user_info/user_info_manage.html", context=context)
     else:
-        with transaction.atomic():
-            CcpMember.objects.all().delete()
-            file = request.FILES.get('file')
-            if file is not None:
+        file = request.FILES.get('file')
+        if file is not None:
+            with transaction.atomic():
+                CcpMember.objects.all().delete()
                 file_name = BASE_DIR + "/static/cache/" + "user_info.xlsx"
                 with open(file_name.encode(), "wb+") as destination:
                     for chunk in file.chunks():
@@ -113,3 +120,15 @@ def user_info_manage(request):
                     )
                     new_ccp_member.save()
                 return HttpResponseRedirect("/user_info/user_info_manage/")
+        else:
+            new_ccp_member = CcpMember.objects.create(
+                student_id=request.POST['student_id'],
+                real_name=request.POST['real_name'],
+                branch=request.POST['branch'],
+                current_state=request.POST['current_state'],
+                phone_number=request.POST['phone_number'],
+                date=request.POST['date'],
+                sponsor=request.POST['sponsor'],
+            )
+            new_ccp_member.save()
+            return HttpResponseRedirect("/user_info/user_info_manage/")
