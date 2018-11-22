@@ -1,0 +1,164 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#upload_file").click(function () {
+                $("#file").click();
+            });
+        });
+
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1000px;
+        {#margin: 30px auto;#} max-width: 1000px;
+        }
+    </style>
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" id="addForm" id="addForm" data-toggle="modal" data-target="#exampleModalCenter">添加</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="upload_file">批量添加</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="submitInfo">修改</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-right">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'journey' %}" style="color: #8a1010">系统设置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;">账号管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;font-weight: bold;">信息管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">添加</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="target_form">
+                        <input type="hidden" id="target_id" class="target_id form-control" value="{{ target_id }}">
+                        <input type="file" class="form-control" id="file" name="file" hidden>
+                        {% csrf_token %}
+                        <div class="form">
+                            <div class="row">
+                                <div class="form-group col-3">
+                                    <label for="content">填表日期</label>
+                                    <input type="text" class="date form-control" id="date" required>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="content">学期</label>
+                                    <input type="text" class="semester form-control" id="semester" placeholder="例：2018-2019-1" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="all_target">
+                            <div class="target">
+                                <hr>
+                                <div class="row">
+                                    <div class="form-group col-10">
+                                        <label for="expected_result">预期有型成果</label>
+                                        <input type="text" class="expected_result form-control" required></input>
+
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <label for="content">用时（天）</label>
+                                        <input type="text" class="time_consumed form-control" placeholder="例：10" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-12">
+                                        <label for="content">目标说明</label>
+                                        <input type="text" class="content form-control" required></input>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-12">
+                                        <label for="end_of_term_summary">期末总结</label>
+                                        <input type="text" class="end_of_term_summary form-control"></input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-danger" id="submitForm">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>学号</th>
+                    <th scope="col" nowrap>姓名</th>
+                    <th scope="col" nowrap>党支部</th>
+                    <th scope="col" nowrap>政治面貌</th>
+                    <th scope="col" nowrap>院党课时间</th>
+                    <th scope="col" nowrap>校党课时间</th>
+                    <th scope="col" nowrap>申请时间</th>
+                    <th scope="col" nowrap>入党时间</th>
+                    <th scope="col" nowrap>介绍人</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr title="{{ result.id }}">
+                        <td nowrap>{{ result.student_id }}</td>
+                        <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.branch }}</td>
+                        <td nowrap>{{ result.current_state }} </td>
+                        <td nowrap>{{ result.phone_number }} </td>
+                        <td nowrap>{{ result.level_1 }} </td>
+                        <td nowrap>{{ result.level_2 }} </td>
+                        <td nowrap>{{ result.date_1 }} </td>
+                        <td nowrap>{{ result.date_2 }} </td>
+                        <td nowrap>{{ result.sponsor }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -6,17 +6,36 @@
                 $("#image").click();
             });
             $("#modifyInfo").click(function () {
-                $("input").attr("readonly", false);
+                $("#real_name").attr("readonly", false);
+                $("#student_id").attr("readonly", false);
+                $("#email").attr("readonly", false);
+            });
+            $("#submitInfo").click(function () {
+                $("#form").submit();
+            });
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#show_image').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image").change(function () {
+                readURL(this);
             });
         });
 
     </script>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+            <a  data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            </a>
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 </ul>
             </div>
@@ -29,74 +48,80 @@
                         <a class="nav-link" id="modifyInfo">修改</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">保存</a>
+                        <a class="nav-link" id="submitInfo">保存</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
         <div class="container mt-5">
-            <div class="row">
-                <div class="form-group col-3">
-                    {% load static %}
-                    <img src="{% static "nobody.jpg" %}" class="img-fluid" alt="Responsive image">
-                    <input type="file" class="form-control" id="image" name="file" hidden>
+            <form method="POST" id="form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-xl-3 d-none d-lg-block">
+                        {% load static %}
+                        <label for="show_image">照片</label>
+                        <img src="{% static user.photo_path %}" class="img-fluid" alt="Responsive image" id="show_image">
+                        <input type="file" class="form-control" id="image" name="file" hidden>
+                    </div>
+                    <div class="col-xl-9 col-sm-12">
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">姓名</label>
+                                <input type="text" class="form-control" id="real_name" name="real_name" value="{{ user.real_name }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">学号</label>
+                                <input type="text" class="form-control" id="student_id" name="student_id" value="{{ user.student_id }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">党支部</label>
+                                <input type="text" class="form-control" id="branch" name="branch" value="{{ ccp_member.current_state }}" required readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">邮箱</label>
+                                <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">联系电话</label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ ccp_member.phone_number }}" required readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">通过院党课时间</label>
+                                <input type="text" class="form-control" id="level_1" name="level_1" value="{{ ccp_member.level_1 }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">通过校党课时间</label>
+                                <input type="text" class="form-control" id="level_2" name="level_2" value="{{ ccp_member.level_2 }}" required readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">入党申请书提交日期</label>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ ccp_member.date_1 }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">入党日期</label>
+                                <input type="text" class="form-control" id="date_2" name="date_2" value="{{ ccp_member.date_2 }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">政治面貌</label>
+                                <input type="text" class="form-control" id="current_state" name="current_state" value="{{ ccp_member.current_state }}" required readonly>
+                            </div>
+                            <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">入党介绍人</label>
+                                <input type="text" class="form-control" id="sponsor" name="sponsor" value="{{ ccp_member.sponsor }}" required readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-9">
-                    <div class="row">
-                        <div class="form-group col-4">
-                            <label for="real_name">姓名</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="{{ user.real_name }}" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">学号</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="{{ user.student_id }}" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">党支部</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="研究生对抗第三党支部" required readonly>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-4">
-                            <label for="real_name">邮箱</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="antiver@foxmail.com" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">联系电话</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="13937463312" required readonly>
-                        </div>
-                    </div>
-                    <div class="row">
-
-                        <div class="form-group col-4">
-                            <label for="real_name">入党申请书提交日期</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="2018-01-01" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">入党日期</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="2018-01-01" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">转正日期</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="2018-01-01" required readonly>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-4">
-                            <label for="real_name">政治面貌</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="党员" required readonly>
-                        </div>
-                        <div class="form-group col-4">
-                            <label for="real_name">入党介绍人</label>
-                            <input type="text" class="form-control" id="student_id" name="real_name" value="仲效仟、孙培阳" required readonly>
-                        </div>
-                    </div>
-                    <div class="row">
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 

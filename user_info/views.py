@@ -2,20 +2,41 @@ from django.shortcuts import render, HttpResponseRedirect
 from .models import User, CcpMember
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from CCP.settings import BASE_DIR
+import random
 
 
 @login_required
 def index(request):
-    if len(CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)) != 0:
-        ccp_member = CcpMember.objects.get(student_id=request.user.student_id, real_name=request.user.real_name)
+    if request.method == "GET":
+        if len(CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)) != 0:
+            ccp_member = CcpMember.objects.get(student_id=request.user.student_id, real_name=request.user.real_name)
+        else:
+            ccp_member = None
+        context = {
+            'user': request.user,
+            'ccp_member': ccp_member,
+            'select': "info",
+        }
+        return render(request, "user_info/index.html", context=context)
     else:
-        ccp_member =None
-    context = {
-        'user': request.user,
-        'ccp_member':ccp_member,
-        'select':"info",
-    }
-    return render(request, "user_info/index.html", context=context)
+        real_name = request.POST['real_name']
+        student_id = request.POST['student_id']
+        email = request.POST['email']
+        file = request.FILES.get('file')
+        if file is not None:
+            path = "photo/" + student_id + " - " + str(random.randint(1, 1000)) + ".jpg"
+            file_name = BASE_DIR + "/static/" + path
+            with open(file_name.encode(), "wb+") as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            request.user.photo_path = path
+        request.user.real_name = real_name
+        request.user.student_id = student_id
+        request.user.email = email
+
+        request.user.save()
+        return HttpResponseRedirect("/user_info")
 
 
 def auth(request):
@@ -56,6 +77,14 @@ def register(request):
 
 
 @login_required
-def manage(request):
+def account_manage(request):
     context = {}
-    return render(request, "user_info/manage.html", context=context)
+    context['select'] = "manage"
+    context['results'] = User.objects.all()
+    return render(request, "user_info/account_manage.html", context=context)
+
+def user_info_manage(request):
+    context = {}
+    context['select'] = "manage"
+    context['results'] = CcpMember.objects.all()
+    return render(request, "user_info/user_info_manage.html", context=context)

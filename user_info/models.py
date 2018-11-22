@@ -59,43 +59,8 @@ class User(AbstractBaseUser):
         ),
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    # 性别
-    gender = models.TextField(blank=True)
-    # 民族
-    nationality = models.TextField(blank=True)
-    # 生源地
-    born_in = models.TextField(blank=True)
-    # 身份证号
-    id_number = models.TextField(blank=True)
-    # 学号
-    student_id = models.TextField(blank=True)
-    # 入学时间
-    entrance_time = models.TextField(blank=True)
-    # 毕业时间
-    graduate_time = models.TextField(blank=True)
-    # 专业
-    major = models.TextField(blank=True)
-    # 组别
-    group_name = models.TextField(blank=True)
-    # 导师
-    tutor = models.TextField(blank=True)
-    # 银行名称
-    bank_name = models.TextField(blank=True)
-    # 银行卡号
-    bank_id = models.TextField(blank=True)
-    # 电话号码
-    phone_number = models.TextField(blank=True)
-    # email
-    email = models.TextField(blank=True)
-    # 毕业学校
-    past_school = models.TextField(blank=True)
-    # 原单位
-    past_unit = models.TextField(blank=True)
-    # 论文得分
-    thesis_defense_score = models.TextField(blank=True)
-    # 论文题目
-    degree_paper = models.TextField(blank=True)
-
+    student_id = models.TextField()
+    photo_path = models.TextField()
     objects = UserManager()
 
     class Meta:
@@ -109,6 +74,18 @@ class User(AbstractBaseUser):
 
 
 class CcpMember(models.Model):
-    student_id = models.TextField()
-    real_name = models.TextField()
-    current_state = models.TextField()
+    student_id = models.TextField(default="Default")
+    real_name = models.TextField(default="Default")
+    branch = models.TextField(default="Default")
+    current_state = models.TextField(default="Default")
+    phone_number = models.TextField(default="Default")
+    # 通过院党课时间
+    level_1 = models.DateTimeField(default="Default")
+    # 通过校党课时间
+    level_2 = models.DateTimeField(default="Default")
+    # 入党申请书提交时间
+    date_1 = models.DateTimeField(default="Default")
+    # 入党时间
+    date_2 = models.DateTimeField(default="Default")
+    # 介绍人
+    sponsor = models.TextField(default="Default")
