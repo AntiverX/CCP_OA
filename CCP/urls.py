@@ -25,5 +25,5 @@ urlpatterns = [
     url(r'journey/', include('journey.urls')),
     url(r'user_info/', include('user_info.urls')),
     url(r'system/', include('main_site.urls')),
-    url(r'^$', views.index, name="index"),
+    url(r'^$', views.index, name="index")
 ]

@@ -33,5 +33,60 @@
             </div>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+        <div class="container header">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+                </div>
+
+                <div class="navbar-right">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'activityAdd' %}" style="color: #8a1010;">填加活动</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link select" href="{% url 'activityAll' %}" style="color: #8a1010">全部活动</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>序号</th>
+                    <th scope="col" nowrap>活动名称</th>
+                    <th scope="col" nowrap>报名截止时间</th>
+                    <th scope="col" nowrap>活动时间</th>
+                    <th scope="col" nowrap>活动时长（小时）</th>
+                    <th scope="col" nowrap>报名人数</th>
+                    <th scope="col" nowrap>活动状态</th>
+                    <th scope="col" nowrap>发布人</th>
+                    <th scope="col" nowrap>报名</th>
+                    <th scope="col" nowrap>详情</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr title="{{ activities.id }}">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td nowrap>{{ activities.activityName }}</td>
+                        <td nowrap>{{ result.email }}</td>
+                        <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.student_id }} </td>
+                        <td nowrap>{% if result.is_admin %}是{% else %}否{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

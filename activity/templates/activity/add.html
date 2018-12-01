@@ -1,0 +1,17 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <div class="container mt-5 col-2">
+        <form class="align-items-end" action="{% url 'activityAdd' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="activityName">活动名称</label>
+                <input type="text" class="form-control" id="activityName" name="activityName" required>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    <button type="submit" id="submitForm" class="btn btn-danger">注册</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

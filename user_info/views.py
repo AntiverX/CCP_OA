@@ -92,6 +92,7 @@ def account_manage(request):
             user.delete()
         return HttpResponseRedirect("http://127.0.0.1:8000/user_info/account_manage/")
 
+
 def user_info_manage(request):
     context = {}
     if request.method == "GET":
