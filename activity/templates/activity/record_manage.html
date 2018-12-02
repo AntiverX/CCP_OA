@@ -1,0 +1,177 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            /* 点击某一行显示修改和删除按钮 */
+            $("tbody tr").click(function () {
+                $("#target_id").val(this.title);
+                if ($("tr").hasClass("table-active")) {
+                    $("tr").removeClass("table-active");
+                }
+                $(this).addClass("table-active");
+                var target_id = $("#target_id").val();
+                var student_id = $("tr[title=" + target_id + "]").find("td").eq(0).text();
+                var real_name = $("tr[title=" + target_id + "]").find("td").eq(1).text();
+                var activity_name = $("tr[title=" + target_id + "]").find("td").eq(2).text();
+                var joinTime = $("tr[title=" + target_id + "]").find("td").eq(3).text();
+                var activity_time = $("tr[title=" + target_id + "]").find("td").eq(4).text();
+                var time_length = $("tr[title=" + target_id + "]").find("td").eq(5).text();
+                $("#student_id").val(student_id);
+                $("#real_name").val(real_name);
+                $("#activity_name").val(activity_name);
+                $("#joinTime").val(joinTime);
+                $("#activity_time").val(activity_time);
+                $("#time_length").val(time_length);
+                $("#audit").click();
+            });
+        });
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1100px;
+            max-width: 1100px;
+        }
+    </style>
+
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">添加活动</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "audit_record" %}">活动审核</a>
+                    </li>
+                    <li class="nav-item operation">
+                        <a class="nav-link" id="audit" data-toggle="modal" data-target="#exampleModalCenter"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-right">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'setting' %}" style="color: #8a1010">系统设置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;">账号管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">信息管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;font-weight: bold">活动管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">添加</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <input type="hidden" id="target_id" name="target_id" value="">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="form-group col-4">
+                                <label for="content">学号</label>
+                                <input type="text" class="date form-control" id="student_id" readonly>
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="content">姓名</label>
+                                <input type="text" class="date form-control" id="real_name" readonly>
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="content">报名时间</label>
+                                <input type="text" class="semester form-control" id="joinTime" placeholder="例：2018-11-11 11:11" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-10">
+                                <label for="content">活动名称</label>
+                                <input type="text" class="date form-control" readonly>
+                            </div>
+                            <div class="form-group col-2">
+                                <label for="content">活动时长</label>
+                                <input type="text" class="date form-control" id="time_length" name="time_length" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-4">
+                                <label for="content">活动时间</label>
+                                <input type="text" class="semester form-control" id="activity_time" readonly>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="content">审核人</label>
+                                <input type="text" class="semester form-control" id="auditor" name="auditor" value="{{ auditor }}">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-danger">提交</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>序号</th>
+                    <th scope="col" nowrap>学号</th>
+                    <th scope="col" nowrap>姓名</th>
+                    <th scope="col" nowrap>活动名称</th>
+                    <th scope="col" nowrap>报名时间</th>
+                    <th scope="col" nowrap>活动时间</th>
+                    <th scope="col" nowrap>活动时长</th>
+                    <th scope="col" nowrap>审核人</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr title="{{ result.id }}">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td nowrap>{{ result.student_id }}</td>
+                        <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.activity_name }}</td>
+                        <td nowrap>{{ result.joinTime|date:"Y-m-d H:i" }}</td>
+                        <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }} </td>
+                        <td nowrap>{{ result.time_length }} </td>
+                        <td nowrap>{{ result.auditor }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

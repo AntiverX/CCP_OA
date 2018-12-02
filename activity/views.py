@@ -36,7 +36,7 @@ def manage(request):
     if request.method == 'GET':
         results = Activity.objects.all()
         context['results'] = results
-        return render(request, "activity/manage.html", context=context)
+        return render(request, "activity/activity_manage.html", context=context)
     else:
         activity_name = request.POST['activity_name']
         time_length = request.POST['time_length']
@@ -90,3 +90,22 @@ def joinActivity(request):
         )
         new_activity_record.save()
         return HttpResponseRedirect("/activity")
+
+
+def audit_record(request):
+    context = {
+        'select': 'manage',
+    }
+    if request.method == "GET":
+        results = ActivityRecord.objects.filter(is_ok="否")
+        context['results'] = results
+        context['auditor'] = request.user.real_name
+        return render(request, "activity/record_manage.html", context=context)
+    else:
+        target_id = request.POST['target_id']
+        auditor = request.POST['auditor']
+        selected_record = ActivityRecord.objects.get(id=target_id)
+        selected_record.auditor = auditor
+        selected_record.is_ok = "是"
+        selected_record.save()
+        return HttpResponseRedirect("/activity/manage/audit_record")
