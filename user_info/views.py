@@ -116,6 +116,7 @@ def account_manage(request):
         return HttpResponseRedirect("http://127.0.0.1:8000/user_info/account_manage/")
 
 # 上传党员信息
+@login_required
 def user_info_manage(request):
     context = {}
     if request.method == "GET":

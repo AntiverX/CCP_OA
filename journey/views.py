@@ -5,33 +5,39 @@ from django.db import transaction
 from CCP.settings import BASE_DIR
 import pandas as pd
 from .models import DocumentInfo
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def index(request):
     context = {}
     return render(request, "journey/index.html", context=context)
 
 
+@login_required
 def course(request):
     context = {
-        'select':"journey_course"
+        'select': "journey_course"
     }
     results = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)
     context['results'] = results
     return render(request, "journey/course.html", context=context)
 
 
+@login_required
 def document(request):
     context = {
-        'select':"journey_document"
+        'select': "journey_document"
     }
     results = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)
     context['results'] = results
     return render(request, "journey/document.html", context=context)
 
 
+@login_required
 def course_manage(request):
     context = {
-        'select':"manage"
+        'select': "manage"
     }
     if request.method == "GET":
         context['select'] = "manage"
@@ -72,9 +78,10 @@ def course_manage(request):
             return HttpResponseRedirect("/journey/manage/course")
 
 
+@login_required
 def document_manage(request):
     context = {
-        'select':"manage"
+        'select': "manage"
     }
     if request.method == "GET":
         context['select'] = "manage"
