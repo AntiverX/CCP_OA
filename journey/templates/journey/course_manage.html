@@ -42,13 +42,13 @@
                         <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;">账号管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;font-weight: bold;">信息管理</a>
+                        <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">信息管理</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010;font-weight: bold;">党课管理</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
@@ -134,11 +134,10 @@
                 <tr>
                     <th scope="col" nowrap>学号</th>
                     <th scope="col" nowrap>姓名</th>
-                    <th scope="col" nowrap>党支部</th>
-                    <th scope="col" nowrap>联系电话</th>
-                    <th scope="col" nowrap>政治面貌</th>
-                    <th scope="col" nowrap>入党时间</th>
-                    <th scope="col" nowrap>介绍人</th>
+                    <th scope="col" nowrap>党课类型</th>
+                    <th scope="col" nowrap>参加时间</th>
+                    <th scope="col" nowrap>分数</th>
+                    <th scope="col" nowrap>审核人</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -146,11 +145,10 @@
                     <tr title="{{ result.id }}">
                         <td nowrap>{{ result.student_id }}</td>
                         <td nowrap>{{ result.real_name }}</td>
-                        <td nowrap>{{ result.branch }}</td>
-                        <td nowrap>{{ result.phone_number }} </td>
-                        <td nowrap>{{ result.current_state }} </td>
-                        <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
-                        <td nowrap>{{ result.sponsor }} </td>
+                        <td nowrap>{{ result.name }}</td>
+                        <td nowrap>{{ result.date|date:"Y-m-d"  }} </td>
+                        <td nowrap>{{ result.score }} </td>
+                        <td nowrap>{{ result.auditor }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>

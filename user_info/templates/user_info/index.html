@@ -3,6 +3,7 @@
     <script>
         $(document).ready(function () {
             $("#upload_image").click(function () {
+                alert("请上传证件照，否则将影响志愿活动审核！");
                 $("#image").click();
             });
             $("#modifyInfo").click(function () {
@@ -32,7 +33,7 @@
     </script>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <a  data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <a data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
             </a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -60,7 +61,11 @@
                     <div class="form-group col-xl-3 d-none d-lg-block">
                         {% load static %}
                         <label for="show_image">照片</label>
-                        <img src="{% static user.photo_path %}" class="img-fluid" alt="Responsive image" id="show_image">
+                        {% if user.photo_path %}
+                            <img src="{% static user.photo_path %}" class="img-fluid" alt="Responsive image" id="show_image">
+                        {% else %}
+                            <img src="{% static "nobody.jpg" %}" class="img-fluid" alt="Responsive image" id="show_image">
+                        {% endif %}
                         <input type="file" class="form-control" id="image" name="file" hidden>
                     </div>
                     <div class="col-xl-9 col-sm-12">
@@ -75,7 +80,7 @@
                             </div>
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">党支部</label>
-                                <input type="text" class="form-control" id="branch" name="branch" value="{{ ccp_member.current_state }}" required readonly>
+                                <input type="text" class="form-control" id="branch" name="branch" value="{{ ccp_member.branch }}" required readonly>
                             </div>
                         </div>
                         <div class="row">
@@ -89,20 +94,29 @@
                             </div>
                         </div>
                         <div class="row">
+                                   <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">入党志愿书提交日期</label>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_1 }}" required readonly>
+                            </div>
+                                      <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">推优日期</label>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_2 }}" required readonly>
+                            </div>
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">通过院党课时间</label>
-                                <input type="text" class="form-control" id="level_1" name="level_1" value="{{ ccp_member.level_1 }}" required readonly>
+                                <input type="text" class="form-control" id="level_1" name="level_1" value="{{ date_3 }}" required readonly>
                             </div>
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">通过校党课时间</label>
-                                <input type="text" class="form-control" id="level_2" name="level_2" value="{{ ccp_member.level_2 }}" required readonly>
+                                <input type="text" class="form-control" id="level_2" name="level_2" value="{{ date_4 }}" required readonly>
+                            </div>
+                                      <div class="form-group col-sm-12 col-xl-4">
+                                <label for="real_name">列为发展对象日期</label>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_5 }}" required readonly>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-sm-12 col-xl-4">
-                                <label for="real_name">入党申请书提交日期</label>
-                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ ccp_member.date_1 }}" required readonly>
-                            </div>
+
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">入党日期</label>
                                 <input type="text" class="form-control" id="date_2" name="date_2" value="{{ ccp_member.date|date:"Y-m-d" }}" required readonly>

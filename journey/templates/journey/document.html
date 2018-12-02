@@ -28,9 +28,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'info' %}" style="color: #8a1010;">已交材料</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'journey_course' %}" style="color: #8a1010">提交材料</a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'journey_course' %}" style="color: #8a1010">提交材料</a>#}
+{#                    </li>#}
                     </li>
                 </ul>
             </div>
@@ -43,21 +43,19 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col" nowrap>序号</th>
-                    <th scope="col" nowrap>材料类型</th>
+                    <th scope="col" nowrap>材料名称</th>
                     <th scope="col" nowrap>提交时间</th>
                     <th scope="col" nowrap>通过</th>
                     <th scope="col" nowrap>审核人</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td nowrap>院党课</td>
-                    <td nowrap>2018-10-10</td>
-                    <td nowrap>是</td>
-                    <td nowrap>王帅鹏</td>
-                </tr>
+                {% for result in results %}
+                    <td nowrap>{{ result.name }}</td>
+                    <td nowrap>{{ result.date|date:"Y-m-d" }}</td>
+                    <td nowrap>{{ result.is_ok }}</td>
+                    <td nowrap>{{ result.auditor }}</td>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
