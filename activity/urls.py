@@ -23,7 +23,5 @@ from activity import views
 urlpatterns = [
     url(r"manage/", views.manage, name="activity_manage"),
     url(r"joinActivity", views.joinActivity, name="joinActivity"),
-    url(r"activityAdd", views.activityAdd, name="activityAdd"),
-    url(r"activityAll", views.activityAll, name="activityAll"),
     url(r"^$", views.index, name="activity")
 ]

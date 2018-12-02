@@ -18,7 +18,6 @@
                 var max_person = $("tr[title=" + target_id + "]").find("td").eq(5).text();
                 var publisher = $("tr[title=" + target_id + "]").find("td").eq(6).text();
                 $("#activity_name").val(activity_name);
-
                 $("#time_length").val(time_length);
                 $("#close_time").val(close_time);
                 $("#activity_time").val(activity_time);
@@ -31,7 +30,7 @@
             /* 点击空白处失去选中，并清空id记录 */
             $(document).on("click", function (e) {
                 if (e.target.tagName != "TH" && e.target.tagName !== "TD" && e.target.tagName !== "A") {
-                    $("#target_id").val();
+                    $("#target_id").val("");
                     $(".operation").attr("hidden", true);
                     if ($("tr").hasClass("table-active")) {
                         $("tr").removeClass("table-active");

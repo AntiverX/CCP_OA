@@ -6,13 +6,25 @@ from django.db import transaction
 
 
 @login_required
+# 显示我的活动
 def index(request):
     context = {
         "select": "activity"
     }
-    results = ActivityRecord.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)
-    context['results'] = results
-    return render(request, "activity/index.html", context=context)
+    if request.method == "GET":
+        results = ActivityRecord.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)
+        context['results'] = results
+        return render(request, "activity/index.html", context=context)
+    else:
+        target_id = request.POST['target_id']
+        selected_record = ActivityRecord.objects.get(id=target_id)
+        activity_name = selected_record.activity_name
+        selected_record.delete()
+        with transaction.atomic():
+            selected_activity = Activity.objects.get(activity_name=activity_name)
+            selected_activity.present_person = selected_activity.present_person - 1
+            selected_activity.save()
+        return HttpResponseRedirect("/activity/")
 
 
 # 管理员添加活动
@@ -53,18 +65,22 @@ def joinActivity(request):
     if request.method == "GET":
         results = Activity.objects.all()
         context['results'] = results
-        return render(request, "activity/activity.html", context=context)
+        return render(request, "activity/attend_activity.html", context=context)
     else:
         target_id = request.POST['target_id']
         target_activity = Activity.objects.get(id=target_id)
-        if len(ActivityRecord.objects.filter(real_name=request.user.real_name,student_id=request.user.student_id,activity_name=target_activity.activity_name)) != 0:
+        if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
+                                             activity_name=target_activity.activity_name)) != 0:
             context['error'] = "你已参加此活动"
-            return render(request,'main_site/error.html',context=context)
+            return render(request, 'main_site/error.html', context=context)
         with transaction.atomic():
             target_activity = Activity.objects.get(id=target_id)
             if target_activity.present_person < target_activity.max_person:
                 target_activity.present_person = target_activity.present_person + 1
-            target_activity.save()
+                target_activity.save()
+            else:
+                context['error'] = "参与人数已满"
+                return render(request, 'main_site/error.html', context=context)
         new_activity_record = ActivityRecord.objects.create(
             student_id=request.user.student_id,
             real_name=request.user.real_name,
@@ -74,30 +90,3 @@ def joinActivity(request):
         )
         new_activity_record.save()
         return HttpResponseRedirect("/activity")
-
-
-@login_required
-def activityAdd(request):
-    context = {
-        "select": "activity"
-    }
-    if request.method == "GET":
-        return render(request, "activity/add.html", context=context)
-    else:
-        activityName = request.POST['activityName']
-        newActivity = Activity.objects.create(
-            activityName=activityName
-        )
-        newActivity.save()
-        print(activityName)
-        return HttpResponseRedirect("/activity/manage")
-
-
-@login_required
-def activityAll(request):
-    """"""
-    context = {
-        "select": "activity",
-        "activities": Activity.objects.all()
-    }
-    return render(request, "activity/manage.html", context=context)
