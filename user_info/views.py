@@ -6,9 +6,10 @@ from CCP.settings import BASE_DIR
 import random
 import pandas as pd
 from django.db import transaction
-from journey.models import DocumentInfo,CourseInfo
+from journey.models import DocumentInfo, CourseInfo
 import datetime
 from dateutil.relativedelta import *
+
 
 @login_required
 def index(request):
@@ -17,31 +18,33 @@ def index(request):
             ccp_member = CcpMember.objects.get(student_id=request.user.student_id, real_name=request.user.real_name)
         else:
             ccp_member = None
-        if len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="入党志愿书")) != 0 :
-            date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="入党志愿书")[0].date
+        if len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")) != 0:
+            date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")[0].date
             date_2 = date_1 + relativedelta(months=1)
             date_5 = date_1 + relativedelta(years=1)
         else:
             date_1 = ""
             date_2 = ""
             date_5 = ""
-        if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="院党课")) !=0:
-            date_3 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="院党课")[0].date
+        if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,
+                                         name="院党课")) != 0:
+            date_3 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="院党课")[0].date
         else:
             date_3 = ""
-        if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="校党课")) !=0:
-            date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="校党课")[0].date
+        if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,
+                                         name="校党课")) != 0:
+            date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="校党课")[0].date
         else:
             date_4 = ""
         context = {
             'user': request.user,
             'ccp_member': ccp_member,
             'select': "info",
-            'date_1':date_1,
-            'date_2':date_2,
-            'date_3':date_3,
-            'date_4':date_4,
-            'date_5':date_5,
+            'date_1': date_1,
+            'date_2': date_2,
+            'date_3': date_3,
+            'date_4': date_4,
+            'date_5': date_5,
         }
         return render(request, "user_info/index.html", context=context)
     else:
@@ -79,6 +82,11 @@ def auth(request):
         return render(request, 'user_info/login.html', context=context)
 
 
+def deauth(request):
+    logout(request)
+    return HttpResponseRedirect("/")
+
+
 def register(request):
     context = {}
     if request.method == "GET":
@@ -113,6 +121,7 @@ def account_manage(request):
             user = User.objects.get(id=target_id)
             user.delete()
         return HttpResponseRedirect("http://127.0.0.1:8000/user_info/account_manage/")
+
 
 # 上传党员信息
 @login_required
