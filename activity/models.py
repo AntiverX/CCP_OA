@@ -21,5 +21,6 @@ class ActivityRecord(models.Model):
     joinTime = models.DateTimeField('报名时间', auto_now=True)
     activity_time = models.DateTimeField('活动时间')
     time_length = models.IntegerField('活动时长')
-    is_ok = models.TextField(default=False)
+    proof = models.TextField(default="")
+    is_ok = models.TextField(default="否")
     auditor = models.TextField()

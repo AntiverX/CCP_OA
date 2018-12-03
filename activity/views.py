@@ -1,9 +1,10 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from activity.models import Activity, ActivityRecord
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-
+import random
+from CCP.settings import BASE_DIR
 
 @login_required
 # 显示我的活动
@@ -16,14 +17,29 @@ def index(request):
         context['results'] = results
         return render(request, "activity/index.html", context=context)
     else:
+
         target_id = request.POST['target_id']
         selected_record = ActivityRecord.objects.get(id=target_id)
-        activity_name = selected_record.activity_name
-        selected_record.delete()
-        with transaction.atomic():
-            selected_activity = Activity.objects.get(activity_name=activity_name)
-            selected_activity.present_person = selected_activity.present_person - 1
-            selected_activity.save()
+        file = request.FILES.get('proof')
+        if file is not None:
+            path = "/static/file/" + request.user.student_id + " - " + selected_record.activity_name + "." + file.name.split(".")[1]
+            file_name = BASE_DIR + path
+            with open(file_name.encode(), "wb+") as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            selected_record.proof = path
+            selected_record.save()
+        else:
+            # 用户退出活动
+            if request.POST['btn'] == "quit":
+                activity_name = selected_record.activity_name
+                selected_record.delete()
+                with transaction.atomic():
+                    selected_activity = Activity.objects.get(activity_name=activity_name)
+                    selected_activity.present_person = selected_activity.present_person - 1
+                    selected_activity.save()
+            else:
+                pass
         return HttpResponseRedirect("/activity/")
 
 

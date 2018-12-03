@@ -45,7 +45,7 @@
                         <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">添加活动</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url "audit_record" %}">活动审核</a>
+                        <a class="nav-link" href="{% url "audit_record" %}">时长审核</a>
                     </li>
                     <li class="nav-item operation">
                         <a class="nav-link" id="audit" data-toggle="modal" data-target="#exampleModalCenter"></a>
@@ -154,6 +154,7 @@
                     <th scope="col" nowrap>报名时间</th>
                     <th scope="col" nowrap>活动时间</th>
                     <th scope="col" nowrap>活动时长</th>
+                    <th scope="col" nowrap>证明材料</th>
                     <th scope="col" nowrap>审核人</th>
                 </tr>
                 </thead>
@@ -167,6 +168,9 @@
                         <td nowrap>{{ result.joinTime|date:"Y-m-d H:i" }}</td>
                         <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }} </td>
                         <td nowrap>{{ result.time_length }} </td>
+                        <td nowrap>{% if result.proof != "" %}{% load static %}
+                            <div><a href="{{ result.proof }}">点击下载</a></div>{% else %}
+                            未上传{% endif %}</td>
                         <td nowrap>{{ result.auditor }} </td>
                     </tr>
                 {% endfor %}

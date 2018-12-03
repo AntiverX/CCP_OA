@@ -12,9 +12,11 @@
         #upload_image {
             cursor: pointer
         }
+
         {#.table thead th{#}
         {#    border-bottom:2px solid #cc1c25;!important;#}
-        {#}#}
+        {
+        #}#}
     </style>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
@@ -31,9 +33,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'info' %}" style="color: #8a1010;">已选党课</a>
                     </li>
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{% url 'journey_course' %}" style="color: #8a1010">参加党课</a>#}
-{#                    </li>#}
+                    {#                    <li class="nav-item">#}
+                    {#                        <a class="nav-link" href="{% url 'journey_course' %}" style="color: #8a1010">参加党课</a>#}
+                    {#                    </li>#}
                     </li>
                 </ul>
             </div>
@@ -54,10 +56,12 @@
                 </thead>
                 <tbody>
                 {% for result in results %}
-                    <td nowrap>{{ result.name }}</td>
-                    <td nowrap>{{ result.date|date:"Y-m-d" }}</td>
-                    <td nowrap>{{ result.score }}</td>
-                    <td nowrap>{{ result.auditor }}</td>
+                    <tr>
+                        <td nowrap>{{ result.name }}</td>
+                        <td nowrap>{{ result.date|date:"Y-m-d" }}</td>
+                        <td nowrap>{{ result.score }}</td>
+                        <td nowrap>{{ result.auditor }}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>

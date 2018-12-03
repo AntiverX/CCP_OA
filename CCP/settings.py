@@ -24,7 +24,9 @@ SECRET_KEY = '2$bl(9h93bbpn6_e)#1t8db4nk%znfgwz(yhbi6hr3%=+v*r(m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'ccp.ibiter.org'
+]
 
 # Application definition
 

@@ -96,23 +96,23 @@
                         <div class="row">
                                    <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">入党志愿书提交日期</label>
-                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_1 }}" required readonly>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_1|date:"Y-m-d" }}" required readonly>
                             </div>
                                       <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">推优日期</label>
-                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_2 }}" required readonly>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_2|date:"Y-m-d" }}" required readonly>
                             </div>
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">通过院党课时间</label>
-                                <input type="text" class="form-control" id="level_1" name="level_1" value="{{ date_3 }}" required readonly>
+                                <input type="text" class="form-control" id="level_1" name="level_1" value="{{ date_3|date:"Y-m-d" }}" required readonly>
                             </div>
                             <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">通过校党课时间</label>
-                                <input type="text" class="form-control" id="level_2" name="level_2" value="{{ date_4 }}" required readonly>
+                                <input type="text" class="form-control" id="level_2" name="level_2" value="{{ date_4|date:"Y-m-d" }}" required readonly>
                             </div>
                                       <div class="form-group col-sm-12 col-xl-4">
                                 <label for="real_name">列为发展对象日期</label>
-                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_5 }}" required readonly>
+                                <input type="text" class="form-control" id="date_1" name="date_1" value="{{ date_5|date:"Y-m-d" }}" required readonly>
                             </div>
                         </div>
                         <div class="row">

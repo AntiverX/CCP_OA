@@ -18,19 +18,19 @@ def index(request):
         else:
             ccp_member = None
         if len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="入党志愿书")) != 0 :
-            date_1 = DocumentInfo.objects.get(student_id=request.user.student_id, real_name=request.user.real_name,name="入党志愿书")[0].date
-            date_2 = date_1 + relativedelta(month=+1)
-            date_5 = date_1 + relativedelta(year=+1)
+            date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="入党志愿书")[0].date
+            date_2 = date_1 + relativedelta(months=1)
+            date_5 = date_1 + relativedelta(years=1)
         else:
             date_1 = ""
             date_2 = ""
             date_5 = ""
         if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="院党课")) !=0:
-            date_3 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="院党课")[-1].date
+            date_3 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="院党课")[0].date
         else:
             date_3 = ""
         if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="校党课")) !=0:
-            date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="校党课")[-1].date
+            date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,name="校党课")[0].date
         else:
             date_4 = ""
         context = {
@@ -59,7 +59,6 @@ def index(request):
         request.user.real_name = real_name
         request.user.student_id = student_id
         request.user.email = email
-
         request.user.save()
         return HttpResponseRedirect("/user_info")
 
