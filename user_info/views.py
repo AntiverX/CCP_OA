@@ -74,7 +74,7 @@ def auth(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/user_info")
         else:
             context['error'] = "用户名或密码错误"
             return render(request, "main_site/error.html", context=context)
