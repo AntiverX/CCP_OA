@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from .models import User, CcpMember
+from .models import User, CcpMember, Branch
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from CCP.settings import BASE_DIR
@@ -165,3 +165,41 @@ def user_info_manage(request):
             )
             new_ccp_member.save()
             return HttpResponseRedirect("/user_info/user_info_manage/")
+
+
+# 上传党员信息
+@login_required
+def branch_manage(request):
+    context = {}
+    if request.method == "GET":
+        context['select'] = "manage"
+        context['results'] = Branch.objects.all()
+        return render(request, "user_info/branch_manage.html", context=context)
+    else:
+        file = request.FILES.get('file')
+        if file is not None:
+            with transaction.atomic():
+                Branch.objects.all().delete()
+                file_name = BASE_DIR + "/static/cache/" + "branch.xlsx"
+                with open(file_name.encode(), "wb+") as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                data = pd.read_excel(file_name)
+                for index, row in data.iterrows():
+                    new_ccp_member = Branch.objects.create(
+                        branch_name=row['支部名称'],
+                        branch_secretary_0=row['支部书记'],
+                        branch_secretary_1=row['组织委员'],
+                        branch_secretary_2=row['宣传委员'],
+                    )
+                    new_ccp_member.save()
+                return HttpResponseRedirect("/user_info/branch_manage/")
+        else:
+            new_ccp_member = CcpMember.objects.create(
+                branch_name=request.POST['student_id'],
+                branch_secretary_0=request.POST['real_name'],
+                branch_secretary_1=request.POST['branch'],
+                branch_secretary_2=request.POST['current_state'],
+            )
+            new_ccp_member.save()
+            return HttpResponseRedirect("/user_info/branch_manage/")

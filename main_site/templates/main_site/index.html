@@ -20,7 +20,7 @@
     }
 
     .top {
-        height: 120px;
+        height: 110px;
         background-color: #a90005;
         position: relative;
     }
@@ -34,6 +34,12 @@
         height: 200px;
         width: 100%;
     }
+
+    body {
+        background-image: url("/static/bg1.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
 </style>
 <div class="top">
     {% load static %}
@@ -41,22 +47,22 @@
         <img src="{% static "logo_index.png" %}"/>
     </div>
 </div>
-<div class="container col-3" style="margin-top: 180px">
-    <form class="align-items-end" style="margin-top: 5em;" method="post" action="{% url "login" %}">
-        <div class="form-group">
-            {% csrf_token %}
-            <label for="exampleInputEmail1">用户名</label>
-            <input type="text" class="form-control" name="username">
-        </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">密码</label>
-            <input type="password" class="form-control" name="password">
-        </div>
-        <div class="row col-12">
-            <button type="submit" class="btn btn-danger">登录</button>
-            <button class="ml-3 btn btn-danger" id="register">注册</button>
-        </div>
-    </form>
+<div class="container  col-3" style="margin-top: 180px">
+        <form class="align-items-end" style="margin-top: 5em;" method="post" action="{% url "login" %}">
+            <div class="form-group">
+                {% csrf_token %}
+                <label for="exampleInputEmail1">用户名</label>
+                <input type="text" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">密码</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <div class="row col-12">
+                <button type="submit" class="btn btn-danger">登录</button>
+                <button class="ml-3 btn btn-danger" id="register">注册</button>
+            </div>
+        </form>
 </div>
 <div class="bottom"></div>
 </body>

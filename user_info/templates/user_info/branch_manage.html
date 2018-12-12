@@ -45,13 +45,13 @@
                         <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">人员管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
+                        <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;font-weight: bold;">支部管理</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010;font-weight: bold;">党课管理</a>
+                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
@@ -135,23 +135,19 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col" nowrap>学号</th>
-                    <th scope="col" nowrap>姓名</th>
-                    <th scope="col" nowrap>党课类型</th>
-                    <th scope="col" nowrap>参加时间</th>
-                    <th scope="col" nowrap>分数</th>
-                    <th scope="col" nowrap>审核人</th>
+                    <th scope="col" nowrap>支部名称</th>
+                    <th scope="col" nowrap>支部书记</th>
+                    <th scope="col" nowrap>组织委员</th>
+                    <th scope="col" nowrap>宣传委员</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for result in results %}
                     <tr title="{{ result.id }}">
-                        <td nowrap>{{ result.student_id }}</td>
-                        <td nowrap>{{ result.real_name }}</td>
-                        <td nowrap>{{ result.name }}</td>
-                        <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
-                        <td nowrap>{{ result.score }} </td>
-                        <td nowrap>{{ result.auditor }} </td>
+                        <td nowrap>{{ result.branch_name }}</td>
+                        <td nowrap>{{ result.branch_secretary_0 }}</td>
+                        <td nowrap>{{ result.branch_secretary_1 }}</td>
+                        <td nowrap>{{ result.branch_secretary_2 }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>

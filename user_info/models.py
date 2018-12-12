@@ -83,3 +83,14 @@ class CcpMember(models.Model):
     date = models.DateField()
     # 介绍人
     sponsor = models.TextField(default="Default")
+
+
+class Branch(models.Model):
+    # 支部名称
+    branch_name = models.TextField(default="Default")
+    # 支部书记
+    branch_secretary_0 = models.TextField(default="Default")
+    # 组织委员
+    branch_secretary_1 = models.TextField(default="Default")
+    # 宣传委员
+    branch_secretary_2 = models.TextField(default="Default")
