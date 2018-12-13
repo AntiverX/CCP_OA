@@ -200,6 +200,7 @@ def branch_manage(request):
                         branch_secretary_0=row['支部书记'],
                         branch_secretary_1=row['组织委员'],
                         branch_secretary_2=row['宣传委员'],
+                        branch_secretary_3=row['团支书'],
                     )
                     new_ccp_member.save()
                 return HttpResponseRedirect("/user_info/branch_manage/")

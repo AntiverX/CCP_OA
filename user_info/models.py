@@ -99,3 +99,5 @@ class Branch(models.Model):
     branch_secretary_1 = models.TextField(default="Default")
     # 宣传委员
     branch_secretary_2 = models.TextField(default="Default")
+    # 团支书
+    branch_secretary_3 = models.TextField(default="Default")
