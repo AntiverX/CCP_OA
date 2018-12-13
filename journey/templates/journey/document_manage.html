@@ -34,29 +34,7 @@
                 </ul>
             </div>
             <div class="navbar-right">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'setting' %}" style="color: #8a1010">系统设置</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;">账号管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">人员管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010;font-weight: bold;">材料管理</a>
-                    </li>
-                </ul>
+                {% include "main_site/manage_base.html" %}
             </div>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>

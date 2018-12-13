@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
-    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.slim.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.14.5/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <meta charset="UTF-8">
@@ -87,7 +87,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% if select == "activity" %}select{% endif %}" href="{% url 'activity' %}" style="color: #8a1010">志愿时长</a>
                     </li>
-                    {% if user.is_admin %}
+                    {% if user.is_admin or user.is_secretary or user.is_gxh %}
                         <li class="nav-item">
                             <a class="nav-link {% if select == "manage" %}select{% endif %}" href="{% url 'manage' %}" style="color: #8a1010">系统管理</a>
                         </li>

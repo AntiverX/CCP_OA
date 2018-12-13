@@ -46,10 +46,12 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=128)
     # 姓名
     real_name = models.CharField(max_length=30, blank=True)
+    # 邮箱
     email = models.EmailField(blank=True)
-    is_admin = models.BooleanField(
-        default=False,
-    )
+    is_admin = models.BooleanField(default=False)
+    is_gxh = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
+    is_secretary = models.BooleanField(default=False)
     is_active = models.BooleanField(
         _('active'),
         default=True,
@@ -59,7 +61,8 @@ class User(AbstractBaseUser):
         ),
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    student_id = models.TextField()
+    # 学号
+    student_id = models.TextField(unique=True)
     photo_path = models.TextField()
     objects = UserManager()
 
@@ -89,6 +92,7 @@ class CcpMember(models.Model):
     related_class = models.TextField()
     # 导师
     tutor = models.TextField(default="")
+
 
 class Branch(models.Model):
     # 支部名称

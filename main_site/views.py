@@ -18,7 +18,7 @@ def index(request):
 def manage(request):
     context = {}
     context['select'] = 'manage'
-    context['manage'] = 1
+    context['select_1'] = 'setting'
     return render(request, "main_site/manage.html", context=context)
 
 

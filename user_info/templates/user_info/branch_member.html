@@ -1,0 +1,70 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#upload_file").click(function () {
+                $("#file").click();
+            });
+
+            $("#submitInfo").click(function () {
+                $("#target_form").submit();
+            });
+        });
+
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1000px;
+            max-width: 1000px;
+        }
+    </style>
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+            </div>
+            <div class="navbar-right">
+                {% include "main_site/manage_base.html" %}
+            </div>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>学号</th>
+                    <th scope="col" nowrap>姓名</th>
+                    <th scope="col" nowrap>班级</th>
+                    <th scope="col" nowrap>身份证号</th>
+                    <th scope="col" nowrap>党支部</th>
+                    <th scope="col" nowrap>联系电话</th>
+                    <th scope="col" nowrap>政治面貌</th>
+                    <th scope="col" nowrap>入党时间</th>
+                    <th scope="col" nowrap>介绍人</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr title="{{ result.id }}">
+                        <td nowrap>{{ result.student_id }}</td>
+                        <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.related_class }}</td>
+                        <td nowrap>{{ result.id_number }}</td>
+                        <td nowrap>{{ result.branch }}</td>
+                        <td nowrap>{{ result.phone_number }} </td>
+                        <td nowrap>{{ result.current_state }} </td>
+                        <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
+                        <td nowrap>{{ result.sponsor }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

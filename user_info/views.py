@@ -8,8 +8,10 @@ import pandas as pd
 from django.db import transaction
 from journey.models import DocumentInfo, CourseInfo
 from dateutil.relativedelta import *
+from CCP.common import is_teacher, is_gxh, is_secretary
 
 import datetime
+
 
 @login_required
 def index(request):
@@ -22,7 +24,7 @@ def index(request):
             date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")[0].date
             birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
             age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
-            if age.year - datetime.datetime.now().year >= 18 and age.month - datetime.datetime.now().month >=0 and age.day - datetime.datetime.now().day >=0:
+            if age.year - datetime.datetime.now().year >= 18 and age.month - datetime.datetime.now().month >= 0 and age.day - datetime.datetime.now().day >= 0:
                 date_2 = date_1 + relativedelta(months=1)
                 date_5 = date_1 + relativedelta(years=1)
             else:
@@ -83,6 +85,7 @@ def auth(request):
             return HttpResponseRedirect("/user_info")
         else:
             context['error'] = "用户名或密码错误"
+            context['return_url'] = "index"
             return render(request, "main_site/error.html", context=context)
     else:
         return render(request, 'user_info/login.html', context=context)
@@ -114,11 +117,13 @@ def register(request):
         return HttpResponseRedirect("/user_info/login")
 
 
-@login_required
+# 账号管理
+@is_gxh
 def account_manage(request):
     if request.method == "GET":
         context = {}
         context['select'] = "manage"
+        context['select_1'] = "account_manage"
         context['results'] = User.objects.all()
         return render(request, "user_info/account_manage.html", context=context)
     else:
@@ -126,11 +131,19 @@ def account_manage(request):
             target_id = request.POST['target_id']
             user = User.objects.get(id=target_id)
             user.delete()
-        return HttpResponseRedirect("http://127.0.0.1:8000/user_info/account_manage/")
+        else:
+            target_id = request.POST['target_id']
+            user = User.objects.get(id=target_id)
+            user.is_admin = request.POST['is_admin']
+            user.is_gxh = request.POST['is_gxh']
+            user.is_teacher = request.POST['is_teacher']
+            user.is_secretary = request.POST['is_secretary']
+            user.save()
+        return HttpResponseRedirect("/user_info/account_manage/")
 
 
 # 上传党员信息
-@login_required
+@is_teacher
 def user_info_manage(request):
     context = {}
     if request.method == "GET":
@@ -176,8 +189,8 @@ def user_info_manage(request):
             return HttpResponseRedirect("/user_info/user_info_manage/")
 
 
-# 上传党员信息
-@login_required
+# 上传支部信息
+@is_teacher
 def branch_manage(request):
     context = {}
     if request.method == "GET":
@@ -213,3 +226,57 @@ def branch_manage(request):
             )
             new_ccp_member.save()
             return HttpResponseRedirect("/user_info/branch_manage/")
+
+
+# 支部信息
+@is_secretary
+def branch_info(request):
+    context = {}
+    if request.method == "GET":
+        current_ccp_member = CcpMember.objects.get(real_name=request.user.real_name, student_id=request.user.student_id)
+        context['select'] = "manage"
+        context['results'] = CcpMember.objects.filter(branch=current_ccp_member.branch)
+        return render(request, "user_info/branch_member.html", context=context)
+
+
+def valid(request):
+    if request.method == "POST":
+        if request.POST['class_name'] == "username":
+            if len(request.POST['value']) < 5:
+                return HttpResponse("太短辣，至少五个字符哦")
+            elif len(User.objects.filter(username=request.POST['value'])) != 0:
+                return HttpResponse("已有此用户名")
+            else:
+                return HttpResponse("OK")
+        elif request.POST['class_name'] == "password":
+            if len(request.POST['value']) < 8:
+                return HttpResponse("太短辣，至少八个字符哦")
+            else:
+                return HttpResponse("OK")
+        elif request.POST['class_name'] == "real_name":
+            if len(request.POST['value']) < 2:
+                return HttpResponse("你的名字只有姓？")
+            else:
+                return HttpResponse("OK")
+        elif request.POST['class_name'] == "student_id":
+            if not request.POST['value'].isdigit() or len(request.POST['value']) != 10:
+                return HttpResponse("学号必须是十位数字哦")
+            elif len(User.objects.filter(student_id=request.POST['value'])) != 0:
+                return HttpResponse("已有用户注册了此学号，请联系管理员！")
+            else:
+                return HttpResponse("OK")
+        elif request.POST['class_name'] == "week_start":
+            if request.POST['value'].isdigit():
+                return HttpResponse("OK")
+            else:
+                return HttpResponse("不能为空")
+        elif request.POST['class_name'] == "week_end":
+            if request.POST['value'].isdigit():
+                return HttpResponse("OK")
+            else:
+                return HttpResponse("不能为空")
+        else:
+            if len(request.POST['value']) != 0:
+                return HttpResponse("OK")
+            else:
+                return HttpResponse("不能为空")

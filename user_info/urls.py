@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'account_manage/', views.account_manage, name="account_manage"),
     url(r'user_info_manage/', views.user_info_manage, name="user_info_manage"),
     url(r'branch_manage/', views.branch_manage, name="branch_manage"),
+    url(r'branch_info/', views.branch_info, name="branch_info"),
+    url(r'valid/', views.valid, name="valid"),
     url(r'^$', views.index, name="info"),
 ]

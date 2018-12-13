@@ -13,6 +13,8 @@ class Command(BaseCommand):
             real_name="王帅鹏",
             student_id="3120180863",
             is_admin=1,
+            is_teacher=1,
+            is_gxh=1
         )
         admin.save()
         new_activity = Activity.objects.create(
