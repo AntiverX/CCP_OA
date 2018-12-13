@@ -7,9 +7,9 @@ import random
 import pandas as pd
 from django.db import transaction
 from journey.models import DocumentInfo, CourseInfo
-import datetime
 from dateutil.relativedelta import *
 
+import datetime
 
 @login_required
 def index(request):
@@ -20,8 +20,14 @@ def index(request):
             ccp_member = None
         if len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")) != 0:
             date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")[0].date
-            date_2 = date_1 + relativedelta(months=1)
-            date_5 = date_1 + relativedelta(years=1)
+            birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
+            age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
+            if age.year - datetime.datetime.now().year >= 18 and age.month - datetime.datetime.now().month >=0 and age.day - datetime.datetime.now().day >=0:
+                date_2 = date_1 + relativedelta(months=1)
+                date_5 = date_1 + relativedelta(years=1)
+            else:
+                date_2 = ""
+                date_5 = ""
         else:
             date_1 = ""
             date_2 = ""
@@ -150,6 +156,9 @@ def user_info_manage(request):
                         phone_number=row['联系电话'],
                         date=row['入党时间'],
                         sponsor=row['入党介绍人'],
+                        id_number=row['身份证号'],
+                        related_class=row['班级'],
+                        tutor=row['导师']
                     )
                     new_ccp_member.save()
                 return HttpResponseRedirect("/user_info/user_info_manage/")

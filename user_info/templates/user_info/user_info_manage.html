@@ -137,6 +137,8 @@
                 <tr>
                     <th scope="col" nowrap>学号</th>
                     <th scope="col" nowrap>姓名</th>
+                    <th scope="col" nowrap>班级</th>
+                    <th scope="col" nowrap>身份证号</th>
                     <th scope="col" nowrap>党支部</th>
                     <th scope="col" nowrap>联系电话</th>
                     <th scope="col" nowrap>政治面貌</th>
@@ -149,6 +151,8 @@
                     <tr title="{{ result.id }}">
                         <td nowrap>{{ result.student_id }}</td>
                         <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.related_class }}</td>
+                        <td nowrap>{{ result.id_number }}</td>
                         <td nowrap>{{ result.branch }}</td>
                         <td nowrap>{{ result.phone_number }} </td>
                         <td nowrap>{{ result.current_state }} </td>

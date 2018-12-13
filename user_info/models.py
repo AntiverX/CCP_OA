@@ -83,7 +83,12 @@ class CcpMember(models.Model):
     date = models.DateField()
     # 介绍人
     sponsor = models.TextField(default="Default")
-
+    # 身份证号
+    id_number = models.TextField()
+    # 班级
+    related_class = models.TextField()
+    # 导师
+    tutor = models.TextField(default="")
 
 class Branch(models.Model):
     # 支部名称

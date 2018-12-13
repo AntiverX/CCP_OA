@@ -3,7 +3,7 @@ from user_info.models import User
 from CCP.settings import BASE_DIR
 import os
 from django.core.management import call_command
-
+import stat
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -23,3 +23,4 @@ class Command(BaseCommand):
             pass
         call_command('makemigrations')
         call_command('migrate')
+        os.chmod(os.path.join(BASE_DIR, 'db.sqlite3'),stat.S_IRWXO)
