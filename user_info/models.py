@@ -85,13 +85,13 @@ class CcpMember(models.Model):
     # 入党时间
     date = models.DateField()
     # 介绍人
-    sponsor = models.TextField(default="Default")
+    sponsor = models.TextField()
     # 身份证号
     id_number = models.TextField()
     # 班级
     related_class = models.TextField()
     # 导师
-    tutor = models.TextField(default="")
+    tutor = models.TextField()
 
 
 class Branch(models.Model):
@@ -99,9 +99,17 @@ class Branch(models.Model):
     branch_name = models.TextField(default="Default")
     # 支部书记
     branch_secretary_0 = models.TextField(default="Default")
+    # 支部书记学号
+    student_id_1 = models.TextField(default="Default")
     # 组织委员
     branch_secretary_1 = models.TextField(default="Default")
+    # 组织委员学号
+    student_id_2 = models.TextField(default="Default")
     # 宣传委员
     branch_secretary_2 = models.TextField(default="Default")
-    # 团支书
-    branch_secretary_3 = models.TextField(default="Default")
+    # 宣传委员学号
+    student_id_3 = models.TextField(default="Default")
+    # 对应导师
+    tutor = models.TextField(default="Default")
+    # 对应班级
+    classes = models.TextField(default="Default")

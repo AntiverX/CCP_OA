@@ -9,6 +9,7 @@ from django.db import transaction
 from journey.models import DocumentInfo, CourseInfo
 from dateutil.relativedelta import *
 from CCP.common import is_teacher, is_gxh, is_secretary
+from django.core.exceptions import ObjectDoesNotExist
 
 import datetime
 
@@ -44,6 +45,18 @@ def index(request):
             date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="校党课")[0].date
         else:
             date_4 = ""
+        if ccp_member.tutor != "":
+            try:
+                branch = Branch.objects.get(tutor__contains=ccp_member.tutor)
+                branch_name = branch.branch_name
+            except :
+                branch_name = ""
+        else:
+            try:
+                branch = Branch.objects.get(tutor__contains=ccp_member.related_class)
+                branch_name = branch.branch_name
+            except:
+                branch_name = ""
         context = {
             'user': request.user,
             'ccp_member': ccp_member,
@@ -53,6 +66,7 @@ def index(request):
             'date_3': date_3,
             'date_4': date_4,
             'date_5': date_5,
+            'branch':branch_name
         }
         return render(request, "user_info/index.html", context=context)
     else:
@@ -159,19 +173,25 @@ def user_info_manage(request):
                 with open(file_name.encode(), "wb+") as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
-                data = pd.read_excel(file_name)
+                data = pd.read_excel(file_name, converters={'班号': str})
                 for index, row in data.iterrows():
+                    if pd.isna(row['状态']):
+                        current_state = ""
+                    else:
+                        current_state = row['状态']
+                    date = "1921-07-23" if pd.isna(row['申请入党时间']) else row['申请入党时间']
+                    phone_number = "" if pd.isna(row['联系电话']) else row['联系电话']
+                    id_number = "" if pd.isna(row['身份证号']) else row['身份证号']
+                    tutor = "" if pd.isna(row['导师']) else row['导师']
                     new_ccp_member = CcpMember.objects.create(
                         student_id=row['学号'],
                         real_name=row['姓名'],
-                        branch=row['党支部'],
-                        current_state=row['面貌'],
-                        phone_number=row['联系电话'],
-                        date=row['入党时间'],
-                        sponsor=row['入党介绍人'],
-                        id_number=row['身份证号'],
-                        related_class=row['班级'],
-                        tutor=row['导师']
+                        current_state=current_state,
+                        phone_number=phone_number,
+                        date=date,
+                        id_number=id_number,
+                        related_class=row['班号'],
+                        tutor=tutor
                     )
                     new_ccp_member.save()
                 return HttpResponseRedirect("/user_info/user_info_manage/")
@@ -211,9 +231,13 @@ def branch_manage(request):
                     new_ccp_member = Branch.objects.create(
                         branch_name=row['支部名称'],
                         branch_secretary_0=row['支部书记'],
+                        student_id_1=row['学号1'],
                         branch_secretary_1=row['组织委员'],
+                        student_id_2=row['学号2'],
                         branch_secretary_2=row['宣传委员'],
-                        branch_secretary_3=row['团支书'],
+                        student_id_3=row['学号3'],
+                        tutor=row['对应导师'],
+                        classes=row['对应班级'],
                     )
                     new_ccp_member.save()
                 return HttpResponseRedirect("/user_info/branch_manage/")

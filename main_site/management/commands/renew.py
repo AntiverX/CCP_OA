@@ -10,7 +10,7 @@ class Command(BaseCommand):
         file_to_delete = []
         for root, dirs, files in os.walk(BASE_DIR):
             for file in files:
-                if "1_" in file or "pyc" in file:
+                if "000" in file or "pyc" in file:
                     file_to_delete.append(os.path.join(root, file))
         for file in file_to_delete:
             try:

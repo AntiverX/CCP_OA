@@ -117,17 +117,19 @@
                     <th scope="col" nowrap>支部书记</th>
                     <th scope="col" nowrap>组织委员</th>
                     <th scope="col" nowrap>宣传委员</th>
-                    <th scope="col" nowrap>团支书</th>
+                    <th scope="col" nowrap>对应班级</th>
+                    <th scope="col" nowrap>对应导师</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for result in results %}
                     <tr title="{{ result.id }}">
                         <td nowrap>{{ result.branch_name }}</td>
-                        <td nowrap>{{ result.branch_secretary_0 }}</td>
-                        <td nowrap>{{ result.branch_secretary_1 }}</td>
-                        <td nowrap>{{ result.branch_secretary_2 }} </td>
-                        <td nowrap>{{ result.branch_secretary_3 }} </td>
+                        <td >{{ result.branch_secretary_0 }}</td>
+                        <td >{{ result.branch_secretary_1 }}</td>
+                        <td >{{ result.branch_secretary_2 }} </td>
+                        <td >{{ result.classes }} </td>
+                        <td >{{ result.tutor }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>
