@@ -9,9 +9,9 @@ from django.db import transaction
 from journey.models import DocumentInfo, CourseInfo
 from dateutil.relativedelta import *
 from CCP.common import is_teacher, is_gxh, is_secretary
-from django.core.exceptions import ObjectDoesNotExist
-
+import re
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @login_required
@@ -21,20 +21,31 @@ def index(request):
             ccp_member = CcpMember.objects.get(student_id=request.user.student_id, real_name=request.user.real_name)
         else:
             ccp_member = None
-        if len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")) != 0:
+
+        # 得到申请入党日期date_1
+        if ccp_member is not None:
+            date_1 = ccp_member.date
+        elif len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")) != 0:
             date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")[0].date
-            birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
-            age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
-            if age.year - datetime.datetime.now().year >= 18 and age.month - datetime.datetime.now().month >= 0 and age.day - datetime.datetime.now().day >= 0:
-                date_2 = date_1 + relativedelta(months=1)
-                date_5 = date_1 + relativedelta(years=1)
-            else:
-                date_2 = ""
-                date_5 = ""
         else:
             date_1 = ""
+
+        # 计算年龄
+        birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
+        age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
+
+        # date_2为推优日期 date_5为列为发展对象日期
+        if datetime.datetime.now().year - age.year > 18:
+            date_2 = date_1 + relativedelta(months=1)
+            date_5 = date_1 + relativedelta(years=1)
+        elif age.year - datetime.datetime.now().year == 18 and age.month - datetime.datetime.now().month >= 0 and age.day - datetime.datetime.now().day >= 0:
+            date_2 = date_1 + relativedelta(months=1)
+            date_5 = date_1 + relativedelta(years=1)
+        else:
             date_2 = ""
             date_5 = ""
+
+        # date_3是院党课通过时间
         if len(CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name,
                                          name="院党课")) != 0:
             date_3 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="院党课")[0].date
@@ -45,12 +56,20 @@ def index(request):
             date_4 = CourseInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="校党课")[0].date
         else:
             date_4 = ""
-        if ccp_member.tutor != "":
+
+        # 获取支部名称
+        if ccp_member is None:
+            branch_name = ""
+        elif ccp_member.branch != "":
+            branch_name = ccp_member.branch
+        # 根据导师获取支部名称
+        elif ccp_member.tutor != "":
             try:
                 branch = Branch.objects.get(tutor__contains=ccp_member.tutor)
                 branch_name = branch.branch_name
-            except :
+            except:
                 branch_name = ""
+        # 根据班级获取支部名称
         else:
             try:
                 branch = Branch.objects.get(tutor__contains=ccp_member.related_class)
@@ -66,7 +85,7 @@ def index(request):
             'date_3': date_3,
             'date_4': date_4,
             'date_5': date_5,
-            'branch':branch_name
+            'branch': branch_name
         }
         return render(request, "user_info/index.html", context=context)
     else:
@@ -168,21 +187,57 @@ def user_info_manage(request):
         file = request.FILES.get('file')
         if file is not None:
             with transaction.atomic():
-                CcpMember.objects.all().delete()
+                if request.POST['is_cover'] == "1":
+                    CcpMember.objects.all().delete()
                 file_name = BASE_DIR + "/static/cache/" + "user_info.xlsx"
                 with open(file_name.encode(), "wb+") as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
                 data = pd.read_excel(file_name, converters={'班号': str})
+                columns_list = data.columns.values
                 for index, row in data.iterrows():
-                    if pd.isna(row['状态']):
-                        current_state = ""
+                    # 班号
+                    if "班号" in columns_list:
+                        related_class = "" if pd.isna(row['班号']) else row['班号']
                     else:
-                        current_state = row['状态']
-                    date = "1921-07-23" if pd.isna(row['申请入党时间']) else row['申请入党时间']
-                    phone_number = "" if pd.isna(row['联系电话']) else row['联系电话']
-                    id_number = "" if pd.isna(row['身份证号']) else row['身份证号']
-                    tutor = "" if pd.isna(row['导师']) else row['导师']
+                        related_class = "" if pd.isna(row['班级']) else row['班级']
+
+                    # 党员类型
+                    if "党员类型" in columns_list:
+                        current_state = "" if pd.isna(row['党员类型']) else row['党员类型']
+                    else:
+                        current_state = "" if pd.isna(row['状态']) else row['状态']
+
+                    # 入党时间
+                    if "申请入党时间" in columns_list:
+                        if isinstance(row['申请入党时间'], datetime.datetime):
+                            date = row['申请入党时间']
+                        else:
+                            # 入党时间为空
+                            if pd.isna(row['申请入党时间']):
+                                date = "1921-07-23"
+                            # 入党时间包含其他字符
+                            else:
+                                try:
+                                    _date = re.findall(r"[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}", row['申请入党时间'])
+                                except TypeError:
+                                    return HttpResponse(str(row['申请入党时间']) + str(type(row['申请入党时间'])))
+                                if len(_date) == 0:
+                                    date = "1921-07-23"
+                                else:
+                                    date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
+                    else:
+                        date = "1921-07-23"
+
+                    # 导师
+                    if "导师" in columns_list:
+                        tutor = "" if pd.isna(row['导师']) else row['导师']
+                    else:
+                        tutor = ""
+                    phone_number = "" if pd.isna(row['联系方式']) else row['联系方式']
+                    id_number = "" if pd.isna(row['身份证号码']) else row['身份证号码']
+
+                    branch = "" if pd.isna(row['对应的党支部']) else row['对应的党支部']
                     new_ccp_member = CcpMember.objects.create(
                         student_id=row['学号'],
                         real_name=row['姓名'],
@@ -190,11 +245,12 @@ def user_info_manage(request):
                         phone_number=phone_number,
                         date=date,
                         id_number=id_number,
-                        related_class=row['班号'],
-                        tutor=tutor
+                        related_class=related_class,
+                        tutor=tutor,
+                        branch=branch,
                     )
                     new_ccp_member.save()
-                return HttpResponseRedirect("/user_info/user_info_manage/")
+            return HttpResponseRedirect("/user_info/user_info_manage/")
         else:
             new_ccp_member = CcpMember.objects.create(
                 student_id=request.POST['student_id'],
@@ -205,8 +261,8 @@ def user_info_manage(request):
                 date=request.POST['date'],
                 sponsor=request.POST['sponsor'],
             )
-            new_ccp_member.save()
-            return HttpResponseRedirect("/user_info/user_info_manage/")
+        new_ccp_member.save()
+    return HttpResponseRedirect("/user_info/user_info_manage/")
 
 
 # 上传支部信息
@@ -257,14 +313,19 @@ def branch_manage(request):
 def branch_info(request):
     context = {}
     if request.method == "GET":
-        current_ccp_member = CcpMember.objects.get(real_name=request.user.real_name, student_id=request.user.student_id)
+        try:
+            current_ccp_member = CcpMember.objects.get(real_name=request.user.real_name, student_id=request.user.student_id)
+            context['results'] = CcpMember.objects.filter(branch=current_ccp_member.branch)
+        except ObjectDoesNotExist:
+            context['results'] = None
         context['select'] = "manage"
-        context['results'] = CcpMember.objects.filter(branch=current_ccp_member.branch)
+        context['select_1'] = "branch_info"
         return render(request, "user_info/branch_member.html", context=context)
 
 
 def valid(request):
     if request.method == "POST":
+        # 用户名约束
         if request.POST['class_name'] == "username":
             if len(request.POST['value']) < 5:
                 return HttpResponse("太短辣，至少五个字符哦")
@@ -272,16 +333,19 @@ def valid(request):
                 return HttpResponse("已有此用户名")
             else:
                 return HttpResponse("OK")
+        # 密码约束
         elif request.POST['class_name'] == "password":
             if len(request.POST['value']) < 8:
                 return HttpResponse("太短辣，至少八个字符哦")
             else:
                 return HttpResponse("OK")
+
         elif request.POST['class_name'] == "real_name":
             if len(request.POST['value']) < 2:
                 return HttpResponse("你的名字只有姓？")
             else:
                 return HttpResponse("OK")
+
         elif request.POST['class_name'] == "student_id":
             if not request.POST['value'].isdigit() or len(request.POST['value']) != 10:
                 return HttpResponse("学号必须是十位数字哦")
@@ -289,16 +353,19 @@ def valid(request):
                 return HttpResponse("已有用户注册了此学号，请联系管理员！")
             else:
                 return HttpResponse("OK")
+
         elif request.POST['class_name'] == "week_start":
             if request.POST['value'].isdigit():
                 return HttpResponse("OK")
             else:
                 return HttpResponse("不能为空")
+
         elif request.POST['class_name'] == "week_end":
             if request.POST['value'].isdigit():
                 return HttpResponse("OK")
             else:
                 return HttpResponse("不能为空")
+        # 其他缺省的值
         else:
             if len(request.POST['value']) != 0:
                 return HttpResponse("OK")

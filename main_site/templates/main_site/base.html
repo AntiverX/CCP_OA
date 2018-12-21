@@ -87,7 +87,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% if select == "activity" %}select{% endif %}" href="{% url 'activity' %}" style="color: #8a1010">志愿时长</a>
                     </li>
-                    {% if user.is_admin or user.is_secretary or user.is_gxh %}
+                    {% if user.is_admin or user.is_secretary or user.is_gxh or user.is_teacher %}
                         <li class="nav-item">
                             <a class="nav-link {% if select == "manage" %}select{% endif %}" href="{% url 'manage' %}" style="color: #8a1010">系统管理</a>
                         </li>

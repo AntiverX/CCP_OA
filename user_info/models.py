@@ -77,7 +77,7 @@ class User(AbstractBaseUser):
 
 
 class CcpMember(models.Model):
-    student_id = models.TextField(default="Default")
+    student_id = models.TextField(unique=True)
     real_name = models.TextField(default="Default")
     branch = models.TextField(default="Default")
     current_state = models.TextField(default="Default")
