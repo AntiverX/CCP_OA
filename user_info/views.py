@@ -18,7 +18,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def index(request):
     if request.method == "GET":
         if len(CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)) != 0:
-            ccp_member = CcpMember.objects.get(student_id=request.user.student_id, real_name=request.user.real_name)
+            ccp_member = CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)[0]
         else:
             ccp_member = None
 
@@ -30,17 +30,21 @@ def index(request):
         else:
             date_1 = ""
 
-        # 计算年龄
-        birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
-        age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
+        if ccp_member is not None:
+            # 计算年龄
+            birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
+            age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
 
-        # date_2为推优日期 date_5为列为发展对象日期
-        if datetime.datetime.now().year - age.year > 18:
-            date_2 = date_1 + relativedelta(months=1)
-            date_5 = date_1 + relativedelta(years=1)
-        elif age.year - datetime.datetime.now().year == 18 and age.month - datetime.datetime.now().month >= 0 and age.day - datetime.datetime.now().day >= 0:
-            date_2 = date_1 + relativedelta(months=1)
-            date_5 = date_1 + relativedelta(years=1)
+            # date_2为推优日期 date_5为列为发展对象日期
+            if datetime.datetime.now().year - age.year > 18:
+                date_2 = date_1 + relativedelta(months=1)
+                date_5 = date_1 + relativedelta(years=1)
+            elif age.year - datetime.datetime.now().year == 18 and age.month - datetime.datetime.now().month >= 0 and age.day - datetime.datetime.now().day >= 0:
+                date_2 = date_1 + relativedelta(months=1)
+                date_5 = date_1 + relativedelta(years=1)
+            else:
+                date_2 = ""
+                date_5 = ""
         else:
             date_2 = ""
             date_5 = ""

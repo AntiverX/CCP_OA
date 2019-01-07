@@ -22,7 +22,7 @@
             <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
         </li>
     {% endif %}
-    {% if user.is_gxh %}
+    {% if user.is_gxh or user.is_teacher %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
         </li>

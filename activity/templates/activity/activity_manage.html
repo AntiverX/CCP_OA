@@ -6,6 +6,25 @@
             max-width: 1100px;
         }
     </style>
+    <script>
+        $(document).ready(function () {
+
+            $("#cover_record").click(function () {
+                $("#is_cover").val("1");
+                $("#target_form").attr('action', "/activity/manage/audit_record");
+                $("#target_form").submit();
+            });
+
+            $("#add_record").click(function () {
+                $("#target_form").attr('action', "/activity/manage/audit_record");
+                $("#target_form").submit();
+            });
+
+            $("#upload_file").click(function () {
+                $("#file").click();
+            });
+        });
+    </script>
 
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
@@ -20,6 +39,18 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url "audit_record" %}">时长审核</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="upload_file">选择文件</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="cover_record">覆盖</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="add_record">追加</a>
+                    </li>
+                    <li class="nav-item operation">
+                        <a class="nav-link" id="audit" data-toggle="modal" data-target="#exampleModalCenter"></a>
                     </li>
                 </ul>
             </div>
@@ -42,8 +73,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST">
+                    <form method="POST" id="target_form" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <input type="hidden" id="is_cover" name="is_cover" class="form-control" value="0">
+                        <input type="file" class="form-control" id="file" name="file" hidden>
                         <div class="row">
                             <div class="form-group col-8">
                                 <label for="content">活动名称</label>

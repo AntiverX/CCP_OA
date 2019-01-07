@@ -10,42 +10,13 @@
 </head>
 <body>
 <style>
-
-    li a {
-        color: #333;
-    !important;
-    }
-
-    .select {;
-        font-weight: bold;
-    }
-
-    .navbar-light .navbar-nav .nav-link {
-        cursor: pointer;
-        color: #8a1010;
-    }
-
-    .top {
-        height: 120px;
-        background-color: #a90005;
-        position: relative;
-    }
-
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-    }
+    @import url("/static/js/base.css");
 </style>
+
 
 <div class="top">
     {% load static %}
-    <div class="logo center">
-        <img src="{% static "logo_index.png" %}"/>
-    </div>
+    <img class="center" src="{% static "logo_index.png" %}"/>
 </div>
 
 <!--

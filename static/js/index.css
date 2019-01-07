@@ -1,0 +1,41 @@
+/* 宽度大于800px */
+
+@media only screen and (min-width: 800px) {
+    body {
+        background-size: cover;
+    }
+}
+
+.top {
+    height: 10vh;
+    background-color: #a90005;
+    overflow: hidden;
+}
+
+body {
+    background-image: url("/static/bg1.jpg");
+    background-size: auto auto;
+    background-repeat: no-repeat;
+}
+
+.bottom {
+    background-position: center top;
+    background-size: cover;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
+
+.top-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1vh;
+    margin-bottom: auto;
+    max-width: 100%;
+    height: 8vh;
+}
+
+.bottom-image {
+    max-width: 100%;
+}

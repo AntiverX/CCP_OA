@@ -1,0 +1,34 @@
+li a {
+    color: #333;
+!important;
+}
+
+.select {;
+    font-weight: bold;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    cursor: pointer;
+    color: #8a1010;
+}
+
+.top {
+    height: 10vh;
+    background-color: #a90005;
+    overflow: hidden;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1vh;
+    margin-bottom: auto;
+    max-width: 100%;
+    height: 8vh;
+}
+
+.second-navbar-nav {
+    flex-direction: row;
+    /* 向左漂移，将竖排变为横排 */
+}

@@ -47,23 +47,17 @@
     </style>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item operation" hidden>
-                    <a class="nav-link" id="modify" data-toggle="modal" data-target="#exampleModalCenter"></a>
-                </li>
-            </ul>
+            <a data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            </a>
 
             <div class="navbar-right">
-                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <ul class="navbar-nav second-navbar-nav mr-auto mt-2 mt-lg-0">
 
                     <li class="nav-item">
                         <a class="nav-link select" href="{% url 'activity' %}" style="color: #8a1010;">我的活动</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
+                        <a class="nav-link ml-2" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
                     </li>
                 </ul>
             </div>

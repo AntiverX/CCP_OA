@@ -10,36 +10,7 @@
 </head>
 <body>
 <style>
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-    }
-
-    .top {
-        height: 110px;
-        background-color: #a90005;
-        position: relative;
-    }
-
-    .bottom {
-        background-image: url("/static/background.png");
-        background-position: center top;
-        background-size: cover;
-        position: fixed;
-        bottom: 0px;
-        height: 200px;
-        width: 100%;
-    }
-
-    body {
-        background-image: url("/static/bg1.jpg");
-        background-size: cover;
-        background-repeat: no-repeat;
-    }
+    @import "/static/js/index.css";
 </style>
 <script>
     $(document).ready(function () {
@@ -51,27 +22,32 @@
 </script>
 <div class="top">
     {% load static %}
-    <div class="logo center">
-        <img src="{% static "logo_index.png" %}"/>
+    <img class="top-image" src="{% static "logo_index.png" %}"/>
+</div>
+<div class="content">
+    <div class="container col-md-3" style="margin-top: 180px">
+        <form class="align-items-end" style="margin-top: 5em;" method="post" action="{% url "login" %}">
+            <div class="form-group">
+                {% csrf_token %}
+                <label for="exampleInputEmail1">用户名</label>
+                <input type="text" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">密码</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <div class="form-group">
+                <div class="row col-12">
+                    <button type="submit" class="btn btn-danger">登录</button>
+                    <button class="ml-3 btn btn-danger" id="register">注册</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<div class="container  col-3" style="margin-top: 180px">
-    <form class="align-items-end" style="margin-top: 5em;" method="post" action="{% url "login" %}">
-        <div class="form-group">
-            {% csrf_token %}
-            <label for="exampleInputEmail1">用户名</label>
-            <input type="text" class="form-control" name="username">
-        </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">密码</label>
-            <input type="password" class="form-control" name="password">
-        </div>
-        <div class="row col-12">
-            <button type="submit" class="btn btn-danger">登录</button>
-            <button class="ml-3 btn btn-danger" id="register">注册</button>
-        </div>
-    </form>
+<div class="bottom">
+    {% load static %}
+    <img class="bottom-image" src="{% static "background.png" %}"/>
 </div>
-<div class="bottom"></div>
 </body>
 </html>
