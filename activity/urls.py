@@ -24,5 +24,6 @@ urlpatterns = [
     url(r"^manage/$", views.manage, name="activity_manage"),
     url(r"joinActivity", views.joinActivity, name="joinActivity"),
     url(r"^manage/audit_record$", views.audit_record, name="audit_record"),
-    url(r"^$", views.index, name="activity")
+    url(r"^$", views.index, name="activity"),
+    url(r"^test$", views.index_test, name="activity_test")
 ]

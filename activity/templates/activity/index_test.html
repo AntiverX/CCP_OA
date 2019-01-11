@@ -1,0 +1,151 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            /* 点击某一行显示修改和删除按钮 */
+            $("tbody tr").click(function () {
+                $("#target_id").val(this.title);
+                if ($("tr").hasClass("table-active")) {
+                    $("tr").removeClass("table-active");
+                }
+                $(this).addClass("table-active");
+                var target_id = $("#target_id").val();
+                var activity_name = $("tr[title=" + target_id + "]").find("td").eq(0).text();
+                var joinTime = $("tr[title=" + target_id + "]").find("td").eq(1).text();
+                var activity_time = $("tr[title=" + target_id + "]").find("td").eq(2).text();
+                var time_length = $("tr[title=" + target_id + "]").find("td").eq(3).text();
+                var proof = $("tr[title=" + target_id + "]").find("td").eq(4).text();
+                var is_ok = $("tr[title=" + target_id + "]").find("td").eq(5).text();
+                var auditor = $("tr[title=" + target_id + "]").find("td").eq(6).text();
+                $("#activity_name").val(activity_name);
+                $("#joinTime").val(joinTime);
+                $("#activity_time").val(activity_time);
+                $("#time_length").val(time_length);
+                $("#is_ok").val(is_ok);
+                $("#auditor").val(auditor);
+                $("#modify").click();
+            });
+
+            /* 点击空白处失去选中，并清空id记录 */
+            $(document).on("click", function (e) {
+                if (1 == 1) {
+                    {#$("#target_id").val("");#}
+                    $(".operation").attr("hidden", true);
+                    if ($("tr").hasClass("table-active")) {
+                        $("tr").removeClass("table-active");
+                    }
+                }
+            });
+
+        });
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1100px;
+            max-width: 1100px;
+        }
+    </style>
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <a data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            </a>
+
+            <div class="navbar-right">
+                <ul class="navbar-nav  mr-auto mt-2 mt-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link select" href="{% url 'activity' %}" style="color: #8a1010;">我的活动</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ml-2" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">参加活动</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input id="target_id" name="target_id" value="" hidden>
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <label for="content">活动名称</label>
+                                    <input type="text" class="date form-control" id="activity_name" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-3">
+                                    <label for="content">报名时间</label>
+                                    <input type="text" class="semester form-control" id="joinTime" readonly>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="content">开始时间</label>
+                                    <input type="text" class="semester form-control" id="activity_time" readonly>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="content">活动时长</label>
+                                    <input type="text" class="semester form-control" id="time_length" readonly>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="content">审核人</label>
+                                    <input type="text" class="semester form-control" id="auditor" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <label for="content">活动内容</label>
+                                    <textarea type="text" class="semester form-control" id="remark" readonly></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="form-group col-4">
+                                    <label for="content">证明材料</label>
+                                    <input type="file" class="form-control" id="proof" name="proof">
+                                </div>
+
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <button type="submit" class="btn btn-danger" name="btn" value="save">保存</button>
+                                    <button type="submit" class="btn btn-danger ml-3" name="btn" value="quit">退出活动
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        {% for result in results %}
+            <div class="card mt-3">
+                <h6 class="card-header bg-white">{{ result.activity_name }}</h6>
+                <div class="card-body">
+                    <h5>
+                        <span class="badge badge-info">报名时间->{{ result.joinTime|date:"Y-m-d H:i" }}</span>
+                        <span class="badge badge-info">开始时间->{{ result.activity_time|date:"Y-m-d H:i" }}</span>
+                        <span class="badge badge-info">时长->{{ result.time_length }}小时</span>
+                        <span class="badge badge-success">证明材料{% if result.proof != "" %}已{% else %}未{% endif %}提交</span>
+                        <span class="badge badge-success">{% if result.is_ok != "" %}已{% else %}未{% endif %}通过审核</span>
+                    </h5>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

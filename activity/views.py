@@ -20,7 +20,6 @@ def index(request):
         context['results'] = results
         return render(request, "activity/index.html", context=context)
     else:
-
         target_id = request.POST['target_id']
         selected_record = ActivityRecord.objects.get(id=target_id)
         file = request.FILES.get('proof')
@@ -44,6 +43,15 @@ def index(request):
             else:
                 pass
         return HttpResponseRedirect("/activity/")
+
+# 测试用活动界面
+def index_test(request):
+    context = {
+        "select": "activity"
+    }
+    results = ActivityRecord.objects.filter(student_id="1120141123")
+    context['results'] = results
+    return render(request, "activity/index_test.html", context=context)
 
 
 # 管理员添加活动
@@ -138,7 +146,11 @@ def audit_record(request):
                 columns_list.remove("总时长")
                 for index, row in data.iterrows():
                     student_id = row["学号"]
+                    real_name = row["姓名"]
                     for column in columns_list:
+                        # 如果时长是0，就不再添加了
+                        if row[column] == 0:
+                            continue
                         try:
                             existing_activity = Activity.objects.get(activity_name=column)
                             activity_time = existing_activity.activity_time
@@ -148,7 +160,7 @@ def audit_record(request):
                             time_length = row[column]
                         new_activity_record = ActivityRecord.objects.create(
                             student_id=student_id,
-                            real_name=request.user.real_name,
+                            real_name=real_name,
                             activity_name=column,
                             joinTime=activity_time,
                             activity_time=activity_time,
