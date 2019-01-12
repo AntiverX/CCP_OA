@@ -1,0 +1,51 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "user_info_list" %}select{% endif %}" href="{% url "user_info_list" %}">党员列表</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "user_info_manage" %}select{% endif %}" href="{% url "user_info_manage" %}">党员管理</a>
+                </li>
+            </ul>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>学号</th>
+                    <th scope="col" nowrap>姓名</th>
+                    <th scope="col" nowrap>班级</th>
+                    <th scope="col" nowrap>导师</th>
+                    <th scope="col" nowrap>身份证号</th>
+                    <th scope="col" nowrap>联系电话</th>
+                    <th scope="col" nowrap>状态</th>
+                    <th scope="col" nowrap>申请入党时间</th>
+                    <th scope="col" nowrap>介绍人</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr title="{{ result.id }}">
+                        <td nowrap>{{ result.student_id }}</td>
+                        <td nowrap>{{ result.real_name }}</td>
+                        <td nowrap>{{ result.related_class }}</td>
+                        <td nowrap>{{ result.tutor }}</td>
+                        <td nowrap>{{ result.id_number }}</td>
+                        <td nowrap>{{ result.phone_number }} </td>
+                        <td nowrap>{{ result.current_state }} </td>
+                        <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
+                        <td nowrap>{{ result.sponsor }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

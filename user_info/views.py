@@ -180,12 +180,22 @@ def account_manage(request):
         return HttpResponseRedirect("/user_info/account_manage/")
 
 
+def user_info_list(request):
+    context = {}
+    if request.method == "GET":
+        context['select'] = "user_info"
+        context['select_1'] = "user_info_list"
+        context['results'] = CcpMember.objects.all()
+        return render(request, "user_info/user_info_list.html", context=context)
+
+
 # 上传党员信息
 @is_teacher
 def user_info_manage(request):
     context = {}
     if request.method == "GET":
-        context['select'] = "manage"
+        context['select'] = "user_info"
+        context['select_1'] = "user_info_manage"
         context['results'] = CcpMember.objects.all()
         return render(request, "user_info/user_info_manage.html", context=context)
     else:
@@ -201,13 +211,12 @@ def user_info_manage(request):
                 data = pd.read_excel(file_name, converters={'班号': str})
                 columns_list = data.columns.values
                 for index, row in data.iterrows():
-                    # if len(CcpMember.objects.filter(student_id=row['学号'])) != 0:
-                    #     context = {
-                    #         'error':"已经有学号为{}的同学了".format(row['学号']),
-                    #         'return_url' : "user_info_manage",
-                    #     }
-                    #     return render(request,"main_site/error.html",context=context)
-
+                    if len(CcpMember.objects.filter(student_id=row['学号'])) != 0:
+                        context = {
+                            'error': "已经有学号为{}的同学了".format(row['学号']),
+                            'return_url': "user_info_manage",
+                        }
+                        return render(request, "main_site/error.html", context=context)
                     # 班号
                     if "班号" in columns_list:
                         related_class = "" if pd.isna(row['班号']) else row['班号']

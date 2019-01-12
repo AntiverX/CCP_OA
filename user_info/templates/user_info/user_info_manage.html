@@ -21,6 +21,12 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "user_info_list" %}select{% endif %}" href="{% url "user_info_list" %}">党员列表</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "user_info_manage" %}select{% endif %}" href="{% url "user_info_manage" %}">党员管理</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" id="upload_file">选择文件</a>
                 </li>
                 <li class="nav-item">

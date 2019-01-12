@@ -57,7 +57,7 @@
                         {% endif %}
                         {% if user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link {% if select == "user_info_manage" %}select{% endif %}" href="{% url 'user_info_manage' %}">人员管理</a>
+                                <a class="nav-link {% if select == "user_info_manage" %}select{% endif %}" href="{% url 'user_info' %}">人员管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_teacher %}
