@@ -2,22 +2,22 @@
 {% block content %}
     <script>
         $(document).ready(function () {
-            $("#upload_file").click(function () {
-                $("#file").click();
-            });
-
-            $("#CoverInfo").click(function () {
+            $("#CoverInfo").click(function (event) {
+                event.preventDefault();
+                alert("go");
                 $("#is_cover").val("1");
                 $("#target_form").submit();
             });
 
-            $("#submitInfo").click(function () {
+            $("#submitInfo").click(function (event) {
+                event.preventDefault();
+                $("#is_cover").val("0");
                 $("#target_form").submit();
             });
         });
 
     </script>
-    <div class="container header">
+    <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item">
@@ -26,121 +26,31 @@
                 <li class="nav-item">
                     <a class="nav-link {% if select_1 == "user_info_manage" %}select{% endif %}" href="{% url "user_info_manage" %}">党员管理</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="upload_file">选择文件</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="CoverInfo">覆盖</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="submitInfo">追加</a>
-                </li>
             </ul>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">添加</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        <div class="container mt-3">
+            <form id="target_form" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">文件</label>
+                    <input type="text" class="form-control" id="is_cover" name="is_cover" hidden>
                 </div>
-                <div class="modal-body">
-                    <form id="target_form" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" id="target_id" class="target_id form-control" value="{{ target_id }}">
-                        <input type="hidden" id="is_cover" name="is_cover" class="form-control" value="0">
-                        <input type="file" class="form-control" id="file" name="file" hidden>
-                        {% csrf_token %}
-                        <div class="form">
-                            <div class="row">
-                                <div class="form-group col-3">
-                                    <label for="content">填表日期</label>
-                                    <input type="text" class="date form-control" id="date" required>
-                                </div>
-                                <div class="form-group col-3">
-                                    <label for="content">学期</label>
-                                    <input type="text" class="semester form-control" id="semester" placeholder="例：2018-2019-1" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="all_target">
-                            <div class="target">
-                                <hr>
-                                <div class="row">
-                                    <div class="form-group col-10">
-                                        <label for="expected_result">预期有型成果</label>
-                                        <input type="text" class="expected_result form-control" required></input>
-
-                                    </div>
-                                    <div class="form-group col-2">
-                                        <label for="content">用时（天）</label>
-                                        <input type="text" class="time_consumed form-control" placeholder="例：10" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-12">
-                                        <label for="content">目标说明</label>
-                                        <input type="text" class="content form-control" required></input>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-12">
-                                        <label for="end_of_term_summary">期末总结</label>
-                                        <input type="text" class="end_of_term_summary form-control"></input>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-12">
-                                <button class="btn btn-danger" id="submitForm">提交</button>
-                            </div>
-                        </div>
-                    </form>
+                <input type="file" class="form-control" id="file" name="file">
+                {% csrf_token %}
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-danger" id="CoverInfo">覆盖</button>
+                        <button class="btn btn-danger ml-2" id="submitInfo">追加</button>
+                    </div>
                 </div>
-
-            </div>
+            </form>
         </div>
     </div>
 
-    <div class="container header">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col" nowrap>学号</th>
-                    <th scope="col" nowrap>姓名</th>
-                    <th scope="col" nowrap>班级</th>
-                    <th scope="col" nowrap>导师</th>
-                    <th scope="col" nowrap>身份证号</th>
-                    <th scope="col" nowrap>联系电话</th>
-                    <th scope="col" nowrap>状态</th>
-                    <th scope="col" nowrap>申请入党时间</th>
-                    <th scope="col" nowrap>介绍人</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
-                    <tr title="{{ result.id }}">
-                        <td nowrap>{{ result.student_id }}</td>
-                        <td nowrap>{{ result.real_name }}</td>
-                        <td nowrap>{{ result.related_class }}</td>
-                        <td nowrap>{{ result.tutor }}</td>
-                        <td nowrap>{{ result.id_number }}</td>
-                        <td nowrap>{{ result.phone_number }} </td>
-                        <td nowrap>{{ result.current_state }} </td>
-                        <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
-                        <td nowrap>{{ result.sponsor }} </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+
+
+    </div>
+    </div>
     </div>
 {% endblock %}

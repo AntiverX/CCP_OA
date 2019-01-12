@@ -180,6 +180,7 @@ def account_manage(request):
         return HttpResponseRedirect("/user_info/account_manage/")
 
 
+# 党员列表
 def user_info_list(request):
     context = {}
     if request.method == "GET":
@@ -196,7 +197,6 @@ def user_info_manage(request):
     if request.method == "GET":
         context['select'] = "user_info"
         context['select_1'] = "user_info_manage"
-        context['results'] = CcpMember.objects.all()
         return render(request, "user_info/user_info_manage.html", context=context)
     else:
         file = request.FILES.get('file')
@@ -212,11 +212,34 @@ def user_info_manage(request):
                 columns_list = data.columns.values
                 for index, row in data.iterrows():
                     if len(CcpMember.objects.filter(student_id=row['学号'])) != 0:
-                        context = {
-                            'error': "已经有学号为{}的同学了".format(row['学号']),
-                            'return_url': "user_info_manage",
-                        }
-                        return render(request, "main_site/error.html", context=context)
+                        existing_reocrd = CcpMember.objects.get(student_id=row['学号'])
+                        if "申请入党时间" in columns_list:
+                            if isinstance(row['申请入党时间'], datetime.datetime):
+                                date = row['申请入党时间']
+                            else:
+                                # 入党时间为空
+                                if pd.isna(row['申请入党时间']):
+                                    date = "1921-07-23"
+                                # 入党时间包含其他字符
+                                else:
+                                    try:
+                                        _date = re.findall(r"[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}", row['申请入党时间'])
+                                    except TypeError:
+                                        context = {
+                                            'error': "申请入党时间错误：{}".format(row['申请入党时间']),
+                                            'return_url': "user_info_manage",
+                                        }
+                                        return render(request, "main_site/error.html", context=context)
+                                    if len(_date) == 0:
+                                        date = "1921-07-23"
+                                    else:
+                                        try:
+                                            date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
+                                        except:
+                                            date = datetime.datetime.strptime(_date[0], "%Y.%m.%d")
+                            existing_reocrd.date = date
+                            existing_reocrd.save()
+                        continue
                     # 班号
                     if "班号" in columns_list:
                         related_class = "" if pd.isna(row['班号']) else row['班号']
@@ -227,7 +250,7 @@ def user_info_manage(request):
                     if "党员类型" in columns_list:
                         current_state = "" if pd.isna(row['党员类型']) else row['党员类型']
                     else:
-                        current_state = ""
+                        current_state = "积极分子"
 
                     # 入党时间
                     if "申请入党时间" in columns_list:
@@ -240,7 +263,7 @@ def user_info_manage(request):
                             # 入党时间包含其他字符
                             else:
                                 try:
-                                    _date = re.findall(r"[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}", row['申请入党时间'])
+                                    _date = re.findall(r"[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}", row['申请入党时间'])
                                 except TypeError:
                                     context = {
                                         'error': "申请入党时间错误：{}".format(row['申请入党时间']),
@@ -250,7 +273,10 @@ def user_info_manage(request):
                                 if len(_date) == 0:
                                     date = "1921-07-23"
                                 else:
-                                    date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
+                                    try:
+                                        date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
+                                    except:
+                                        date = datetime.datetime.strptime(_date[0], "%Y.%m.%d")
                     else:
                         date = "1921-07-23"
 
