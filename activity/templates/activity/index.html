@@ -1,5 +1,5 @@
-{% extends "main_site/base.html" %}
-{% block content %}
+{% extends "activity/base.html" %}
+{% block content_1 %}
     <script>
         $(document).ready(function () {
             /* 点击某一行显示修改和删除按钮 */
@@ -45,23 +45,8 @@
             max-width: 1100px;
         }
     </style>
+
     <div class="container header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <a data-toggle="collapse" data-target="#navbarToggler2" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-            </a>
-
-            <div class="navbar-right">
-                <ul class="navbar-nav second-navbar-nav mr-auto mt-2 mt-lg-0">
-
-                    <li class="nav-item">
-                        <a class="nav-link select" href="{% url 'activity' %}" style="color: #8a1010;">我的活动</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link ml-2" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
 
         <!-- Modal -->
@@ -121,7 +106,8 @@
                             <div class="row">
                                 <div class="form-group col-12">
                                     <button type="submit" class="btn btn-danger" name="btn" value="save">保存</button>
-                                    <button type="submit" class="btn btn-danger ml-3" name="btn" value="quit">退出活动</button>
+                                    <button type="submit" class="btn btn-danger ml-3" name="btn" value="quit">退出活动
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -129,40 +115,22 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-    <div class="container header">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col" nowrap>序号</th>
-                    <th scope="col" nowrap>活动名称</th>
-                    <th scope="col" nowrap>报名时间</th>
-                    <th scope="col" nowrap>开始时间</th>
-                    <th scope="col" nowrap>活动时长（小时）</th>
-                    <th scope="col" nowrap>证明材料</th>
-                    <th scope="col" nowrap>是否完成</th>
-                    <th scope="col" nowrap>审核人</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
-                    <tr title="{{ result.id }}">
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td nowrap>{{ result.activity_name }}</td>
-                        <td nowrap>{{ result.joinTime|date:"Y-m-d H:i" }}</td>
-                        <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }}</td>
-                        <td nowrap>{{ result.time_length }}</td>
-                        <td nowrap>{% if result.proof != "" %}{% load static %}<div><a href="{{ result.proof }}">点击下载</a></div>{% else %}
-                            未上传{% endif %}</td>
-                        <td nowrap>{{ result.is_ok }}</td>
-                        <td nowrap>{{ result.auditor }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+
+    <div class="container mt-3">
+        {% for result in results %}
+            <div class="card mt-3">
+                <h6 class="card-header bg-white">{{ result.activity_name }}</h6>
+                <div class="card-body">
+                    <h5>
+                        <span class="badge badge-info">报名时间->{{ result.joinTime|date:"Y-m-d H:i" }}</span>
+                        <span class="badge badge-info">开始时间->{{ result.activity_time|date:"Y-m-d H:i" }}</span>
+                        <span class="badge badge-info">时长->{{ result.time_length }}小时</span>
+                        <span class="badge badge-success">证明材料{% if result.proof != "" %}已{% else %}未{% endif %}提交</span>
+                        <span class="badge badge-success">{% if result.is_ok != "" %}已{% else %}未{% endif %}通过审核</span>
+                    </h5>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

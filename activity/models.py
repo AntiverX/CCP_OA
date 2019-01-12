@@ -11,6 +11,7 @@ class Activity(models.Model):
     activity_time = models.DateTimeField('活动时间')
     present_person = models.IntegerField('报名人数',default=0)
     max_person = models.IntegerField('最大人数')
+    content = models.TextField(default="")
     publisher = models.CharField('发布人', max_length=100)
     person_in_charge = models.TextField(default="")
 
