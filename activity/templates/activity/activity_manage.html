@@ -1,11 +1,5 @@
 {% extends "main_site/base.html" %}
 {% block content %}
-    <style>
-        .modal-dialog.modal-800 {
-            width: 1100px;
-            max-width: 1100px;
-        }
-    </style>
     <script>
         $(document).ready(function () {
 
@@ -26,107 +20,68 @@
         });
     </script>
 
-    <div class="container header">
+
+    <div class="container">
+        <!-- 二级菜单 -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">添加活动</a>
+            <ul class="navbar-nav" style="flex-direction: row;">
+                <li class="nav-item ">
+                    <a class="nav-link {% if select_1 == "activity_list" %}select{% endif %}" href="{% url "activity_list" %}">活动列表</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if select_1 == "activity_manage" %}select{% endif %}" href="{% url "activity_manage" %}">添加活动</a>
                 </li>
             </ul>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
-    </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">添加</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        <div class="container mt-3">
+            <form method="POST" id="target_form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-8">
+                        <label for="content">活动名称</label>
+                        <input type="text" class="date form-control" id="activity_name" name="activity_name" required>
+                    </div>
+                    <div class="form-group col-2">
+                        <label for="content">活动时长（小时）</label>
+                        <input type="text" class="date form-control" id="time_length" name="time_length" required>
+                    </div>
+                    <div class="form-group col-2">
+                        <label for="content">最大人数</label>
+                        <input type="text" class="semester form-control" id="max_person" name="max_person" required>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" id="target_form" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" id="is_cover" name="is_cover" class="form-control" value="0">
-                        <input type="file" class="form-control" id="file" name="file" hidden>
-                        <div class="row">
-                            <div class="form-group col-8">
-                                <label for="content">活动名称</label>
-                                <input type="text" class="date form-control" id="activity_name" name="activity_name" required>
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="content">活动时长</label>
-                                <input type="text" class="date form-control" id="time_length" name="time_length" required>
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="content">最大人数</label>
-                                <input type="text" class="semester form-control" id="max_person" name="max_person" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-4">
-                                <label for="content">活动开始时间</label>
-                                <input type="text" class="semester form-control" id="activity_time" name="activity_time" placeholder="例：2018-11-11 11:11" required>
-                            </div>
-                            <div class="form-group col-4">
-                                <label for="content">报名截止时间</label>
-                                <input type="text" class="semester form-control" id="close_time" name="close_time" placeholder="例：2018-11-11 11:11" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-3">
-                                <label for="content">发布人</label>
-                                <input type="text" class="semester form-control" id="publisher" name="publisher" required>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-danger">提交</button>
-                            </div>
-                        </div>
-
-                    </form>
+                <div class="row">
+                    <div class="form-group col-4">
+                        <label for="content">活动开始时间</label>
+                        <input type="text" class="semester form-control" id="activity_time" name="activity_time" placeholder="例：2018-11-11 11:11" required>
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="content">报名截止时间</label>
+                        <input type="text" class="semester form-control" id="close_time" name="close_time" placeholder="例：2018-11-11 11:11" required>
+                    </div>
+                    <div class="form-group col-2">
+                        <label for="person_in_charge">负责人</label>
+                        <input type="text" class="form-control" id="person_in_charge" name="person_in_charge" required>
+                    </div>
                 </div>
-
-            </div>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <label for="content">活动内容</label>
+                        <textarea type="text" class="form-control" id="content" name="content" rows="4" required></textarea>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-danger">提交</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="container header">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col" nowrap>序号</th>
-                    <th scope="col" nowrap>活动名称</th>
-                    <th scope="col" nowrap>活动时长（小时）</th>
-                    <th scope="col" nowrap>报名截止时间</th>
-                    <th scope="col" nowrap>活动时间</th>
-                    <th scope="col" nowrap>报名人数</th>
-                    <th scope="col" nowrap>最大人数</th>
-                    <th scope="col" nowrap>发布人</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
-                    <tr title="{{ activities.id }}">
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td nowrap>{{ result.activity_name }}</td>
-                        <td nowrap>{{ result.time_length }}</td>
-                        <td nowrap>{{ result.close_time|date:"Y-m-d H:i" }}</td>
-                        <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }} </td>
-                        <td nowrap>{{ result.present_person }} </td>
-                        <td nowrap>{{ result.max_person }} </td>
-                        <td nowrap>{{ result.publisher }} </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+
 {% endblock %}

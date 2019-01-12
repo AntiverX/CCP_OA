@@ -1,0 +1,171 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1100px;
+            max-width: 1100px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $("tr").click(function () {
+                $("#id").val($(this).attr("id"));
+                $.post("/activity/get_activity", {"id": $(this).attr("id")}, function (data) {
+                    $("#activity_name").val(data.activity_name);
+                    $("#time_length").val(data.time_length);
+                    $("#max_person").val(data.max_person);
+                    $("#activity_time").val(data.activity_time);
+                    $("#close_time").val(data.close_time);
+                    $("#person_in_charge").val(data.person_in_charge);
+                    $("#content").val(data.content);
+                })
+                $("#modal").modal();
+            });
+
+            $("#modify").click(function () {
+                var data = {
+                    "id": $("#id").val(),
+                    "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
+                    "activity_name": $("#activity_name").val(),
+                    "time_length": $("#time_length").val(),
+                    "max_person": $("#max_person").val(),
+                    "activity_time": $("#activity_time").val(),
+                    "close_time": $("#close_time").val(),
+                    "person_in_charge": $("#person_in_charge").val(),
+                    "content": $("#content").val(),
+                    "type": "modify"
+                }
+                $.post("/activity/activity_list", data, function (data) {
+                    location.reload();
+                })
+            });
+
+            $("#delete").click(function () {
+                var data = {
+                    "id": $("#id").val(),
+                    "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
+                    "activity_name": $("#activity_name").val(),
+                    "time_length": $("#time_length").val(),
+                    "max_person": $("#max_person").val(),
+                    "activity_time": $("#activity_time").val(),
+                    "close_time": $("#close_time").val(),
+                    "person_in_charge": $("#person_in_charge").val(),
+                    "content": $("#content").val(),
+                    "type": "delete"
+                }
+                $.post("/activity/activity_list", data, function (data) {
+                    location.reload();
+                })
+            });
+        });
+    </script>
+
+    <!-- 二级菜单 -->
+    <div class="container header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <ul class="navbar-nav" style="flex-direction: row;">
+                <li class="nav-item ">
+                    <a class="nav-link {% if select_1 == "activity_list" %}select{% endif %}" href="{% url "activity_list" %}">活动列表</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if select_1 == "activity_manage" %}select{% endif %}" href="{% url "activity_manage" %}">添加活动</a>
+                </li>
+            </ul>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">添加</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input type="hidden" class="date form-control" id="id" name="id" required>
+                    <div class="row">
+                        <div class="form-group col-8">
+                            <label for="content">活动名称</label>
+                            <input type="text" class="date form-control" id="activity_name" name="activity_name" required>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="content">活动时长（小时）</label>
+                            <input type="text" class="date form-control" id="time_length" name="time_length" required>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="content">最大人数</label>
+                            <input type="text" class="semester form-control" id="max_person" name="max_person" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-4">
+                            <label for="content">活动开始时间</label>
+                            <input type="text" class="semester form-control" id="activity_time" name="activity_time" placeholder="例：2018-11-11 11:11" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="content">报名截止时间</label>
+                            <input type="text" class="semester form-control" id="close_time" name="close_time" placeholder="例：2018-11-11 11:11" required>
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="person_in_charge">负责人</label>
+                            <input type="text" class="form-control" id="person_in_charge" name="person_in_charge" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label for="content">活动内容</label>
+                            <textarea type="text" class="form-control" id="content" name="content" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <button id="modify" class="btn btn-danger">提交</button>
+                            <button id="delete" class="btn btn-danger ml-2">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container header">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" nowrap>序号</th>
+                    <th scope="col" nowrap>活动名称</th>
+                    <th scope="col" nowrap>活动时长（小时）</th>
+                    <th scope="col" nowrap>报名截止时间</th>
+                    <th scope="col" nowrap>活动时间</th>
+                    <th scope="col" nowrap>报名人数</th>
+                    <th scope="col" nowrap>最大人数</th>
+                    <th scope="col" nowrap>负责人</th>
+                    <th scope="col" nowrap>发布人</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for result in results %}
+                    <tr id="{{ result.id }}">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td nowrap>{{ result.activity_name }}</td>
+                        <td nowrap>{{ result.time_length }}</td>
+                        <td nowrap>{{ result.close_time|date:"Y-m-d H:i" }}</td>
+                        <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }} </td>
+                        <td nowrap>{{ result.present_person }} </td>
+                        <td nowrap>{{ result.max_person }} </td>
+                        <td nowrap>{{ result.person_in_charge }} </td>
+                        <td nowrap>{{ result.publisher }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

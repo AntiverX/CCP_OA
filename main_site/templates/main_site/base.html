@@ -19,21 +19,7 @@
     <img class="center" src="{% static "logo_index.png" %}"/>
 </div>
 
-<!--
-<div class="container header">
-    <div class="top">
-        {% load static %}
-        <div class="d-sm-block d-md-none">
-            <img src="{% static "logo_small.png" %}"/>
-        </div>
-        <div class="d-none d-xl-block">
-            <img src="{% static "logo.png" %}"/>
-        </div>
-    </div>
-</div>
--->
-
-<div class="container header mt-3">
+<div class="container mt-3">
     <hr style="margin:0 !important; border:none;border-top:1px solid #cc1c25;"/>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
@@ -58,11 +44,6 @@
                     <li class="nav-item">
                         <a class="nav-link {% if select == "activity" %}select{% endif %}" href="{% url 'activity' %}" style="color: #8a1010">志愿时长</a>
                     </li>
-                    {% if user.is_admin or user.is_secretary or user.is_gxh or user.is_teacher %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if select == "manage" %}select{% endif %}" href="{% url 'manage' %}" style="color: #8a1010">系统管理</a>
-                        </li>
-                    {% endif %}
                 {% endif %}
                 {% if user.is_teacher %}
                     <ul class="navbar-nav mr-auto">

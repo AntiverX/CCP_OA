@@ -24,6 +24,8 @@ def manage(request):
 
 @login_required
 def setting(request):
-    context = {}
-    context['select'] = 'manage'
+    context = {
+        'select':"setting",
+        "select_1":""
+    }
     return render(request, "main_site/manage.html", context=context)

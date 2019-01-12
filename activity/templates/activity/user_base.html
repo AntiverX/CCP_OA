@@ -1,0 +1,18 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <div class="container header">
+        <!-- 二级菜单  -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <ul class="navbar-nav" style="flex-direction: row;">
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "index" %}select{% else %}{% endif %}" href="{% url 'activity' %}" style="color: #8a1010;">我的活动</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ml-2 {% if select_1 == "joinActivity" %}select{% endif %}" href="{% url 'joinActivity' %}" style="color: #8a1010">参加活动</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    {% block content_1 %}
+    {% endblock %}
+{% endblock %}

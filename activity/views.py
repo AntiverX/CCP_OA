@@ -8,6 +8,7 @@ import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+from CCP.common import is_teacher
 
 
 @login_required
@@ -78,8 +79,8 @@ def joinActivity(request):
                         'content': "你已参加此活动"
                     }
                 )
+            target_activity = Activity.objects.select_for_update().get(id=target_id)
             with transaction.atomic():
-                target_activity = Activity.objects.get(id=target_id)
                 if target_activity.present_person < target_activity.max_person:
                     target_activity.present_person = target_activity.present_person + 1
                     target_activity.save()
@@ -100,8 +101,8 @@ def joinActivity(request):
             new_activity_record.save()
             return JsonResponse(
                 {
-                    'title':"报名成功",
-                    'content':"你已经报名成功"
+                    'title': "报名成功",
+                    'content': "你已经报名成功"
                 }
             )
         # 退出活动
@@ -115,8 +116,8 @@ def joinActivity(request):
                 )
             try:
                 existing_record = ActivityRecord.objects.get(activity_name=target_activity.activity_name, student_id=request.user.student_id)
+                target_activity = Activity.objects.select_for_update().get(id=target_id)
                 with transaction.atomic():
-                    target_activity = Activity.objects.get(id=target_id)
                     target_activity.present_person = target_activity.present_person - 1
                     target_activity.save()
                 existing_record.delete()
@@ -132,15 +133,53 @@ def joinActivity(request):
                 return render(request, "main_site/error.html", context=context)
 
 
-# 管理员添加活动
-@login_required
-def manage(request):
+# 活动列表
+@is_teacher
+def activity_list(request):
     context = {
         'select': 'activity_manage',
+        'select_1': 'activity_list',
     }
     if request.method == 'GET':
         results = Activity.objects.all()
         context['results'] = results
+        return render(request, "activity/activity_list.html", context=context)
+    else:
+        if request.POST['type'] == "delete":
+            existing_activity = Activity.objects.select_for_update().get(id=request.POST['id'])
+            existing_activity_records = ActivityRecord.objects.select_for_update().filter(activity_name=existing_activity.activity_name)
+            with transaction.atomic():
+                existing_activity.delete()
+                existing_activity_records.delete()
+        else:
+            existing_activity = Activity.objects.select_for_update().get(id=request.POST['id'])
+            existing_activity_records = ActivityRecord.objects.select_for_update().filter(activity_name=existing_activity.activity_name)
+            with transaction.atomic():
+                existing_activity.activity_name = request.POST['activity_name']
+                existing_activity.time_length = request.POST['time_length']
+                existing_activity.max_person = request.POST['max_person']
+                existing_activity.activity_time = request.POST['activity_time']
+                existing_activity.close_time = request.POST['close_time']
+                existing_activity.person_in_charge = request.POST['person_in_charge']
+                existing_activity.content = request.POST['content']
+                for record in existing_activity_records:
+                    record.activity_name = request.POST['activity_name']
+                    record.time_length = request.POST['time_length']
+                    record.activity_time = request.POST['activity_time']
+                    record.close_time = request.POST['close_time']
+                    record.save()
+                existing_activity.save()
+        return HttpResponseRedirect("/activity/activity_list")
+
+
+# 添加活动
+@login_required
+def manage(request):
+    context = {
+        'select': 'activity_manage',
+        'select_1': "activity_manage",
+    }
+    if request.method == 'GET':
         return render(request, "activity/activity_manage.html", context=context)
     else:
         activity_name = request.POST['activity_name']
@@ -148,26 +187,27 @@ def manage(request):
         max_person = request.POST['max_person']
         activity_time = request.POST['activity_time']
         close_time = request.POST['close_time']
-        publisher = request.POST['publisher']
         new_activity = Activity.objects.create(
             activity_name=activity_name,
             time_length=time_length,
             max_person=max_person,
             activity_time=activity_time,
             close_time=close_time,
-            publisher=publisher,
+            content=request.POST['content'],
+            publisher=request.user.real_name,
+            person_in_charge=request.POST['person_in_charge'],
         )
         new_activity.save()
-        return HttpResponseRedirect("/activity/manage/")
+        return HttpResponseRedirect("/activity/activity_list")
 
 
 def activity_record_manage(request):
     context = {
         'select': 'activity_record_manage',
-        'select_1':"activity_record_manage",
+        'select_1': "activity_record_manage",
     }
     if request.method == "GET":
-        results = ActivityRecord.objects.filter(is_ok="否")
+        results = ActivityRecord.objects.filter(is_ok=False)
         context['results'] = results
         context['auditor'] = request.user.real_name
         return render(request, "activity/record_manage.html", context=context)
@@ -232,6 +272,12 @@ def get_activity(request):
         existing_activity = Activity.objects.get(id=id)
         return JsonResponse(
             {
+                "activity_name": existing_activity.activity_name,
+                "time_length": existing_activity.time_length,
+                "max_person": existing_activity.max_person,
+                "activity_time": existing_activity.activity_time.strftime("%Y-%m-%d %H:%M"),
+                "close_time": existing_activity.close_time.strftime("%Y-%m-%d %H:%M"),
+                "person_in_charge": existing_activity.person_in_charge,
                 "content": existing_activity.content,
             }
         )

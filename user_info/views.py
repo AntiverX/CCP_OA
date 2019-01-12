@@ -159,10 +159,10 @@ def register(request):
 @is_gxh
 def account_manage(request):
     if request.method == "GET":
-        context = {}
-        context['select'] = "manage"
-        context['select_1'] = "account_manage"
-        context['results'] = User.objects.all()
+        context = {
+            'select': "account_manage",
+            'results': User.objects.all(),
+        }
         return render(request, "user_info/account_manage.html", context=context)
     else:
         if request.POST['btn'] == "delete":
@@ -234,10 +234,10 @@ def user_info_manage(request):
                                     _date = re.findall(r"[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}", row['申请入党时间'])
                                 except TypeError:
                                     context = {
-                                        'error':"申请入党时间错误：{}".format(row['申请入党时间']),
-                                        'return_url':"user_info_manage",
+                                        'error': "申请入党时间错误：{}".format(row['申请入党时间']),
+                                        'return_url': "user_info_manage",
                                     }
-                                    return render(request,"main_site/error.html",context=context)
+                                    return render(request, "main_site/error.html", context=context)
                                 if len(_date) == 0:
                                     date = "1921-07-23"
                                 else:
@@ -269,10 +269,10 @@ def user_info_manage(request):
                         new_ccp_member.save()
                     except IntegrityError:
                         context = {
-                            'error':'''已经有学号为"{}"的同学了'''.format(row['学号']),
-                            'return_url' : "user_info_manage",
+                            'error': '''已经有学号为"{}"的同学了'''.format(row['学号']),
+                            'return_url': "user_info_manage",
                         }
-                        return render(request,"main_site/error.html",context=context)
+                        return render(request, "main_site/error.html", context=context)
             return HttpResponseRedirect("/user_info/user_info_manage/")
         else:
             new_ccp_member = CcpMember.objects.create(
