@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 
+
 @login_required
 # 我的活动界面
 def index(request):
@@ -51,7 +52,7 @@ def index(request):
 def joinActivity(request):
     context = {
         "select": "activity",
-        "select_1":"joinActivity"
+        "select_1": "joinActivity"
     }
     if request.method == "GET":
         results = Activity.objects.all()
@@ -63,7 +64,7 @@ def joinActivity(request):
         if datetime.datetime.now() > target_activity.close_time:
             context['error'] = "已经过了报名时间"
             context['return_url'] = "activity"
-            return render(request,'main_site/error.html',context=context)
+            return render(request, 'main_site/error.html', context=context)
         if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
                                              activity_name=target_activity.activity_name)) != 0:
             context['error'] = "你已参加此活动"
@@ -86,7 +87,9 @@ def joinActivity(request):
             time_length=Activity.objects.get(id=target_id).time_length,
         )
         new_activity_record.save()
-        return HttpResponseRedirect("/activity")
+        context['success'] = "报名成功"
+        context['return_url'] = "joinActivity"
+        return render(request, "main_site/success.html", context=context)
 
 
 # 管理员添加活动
