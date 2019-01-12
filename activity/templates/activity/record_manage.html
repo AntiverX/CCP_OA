@@ -58,10 +58,7 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">添加活动</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link select" href="{% url "audit_record" %}">时长审核</a>
+                        <a class="nav-link {% if select_1 == "activity_record_manage" %}select{% endif %}" href="{% url "activity_record_manage" %}">时长审核</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="upload_file">选择文件</a>

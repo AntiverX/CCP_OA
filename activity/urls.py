@@ -25,6 +25,6 @@ urlpatterns = [
     re_path(r"^get_activity$", views.get_activity),
     re_path(r"^get_activity_record$", views.get_activity_record),
     re_path(r"joinActivity", views.joinActivity, name="joinActivity"),
-    re_path(r"^manage/audit_record$", views.audit_record, name="audit_record"),
+    re_path(r"^manage/audit_record$", views.activity_record_manage, name="activity_record_manage"),
     re_path(r"^$", views.index, name="activity"),
 ]

@@ -67,41 +67,41 @@
                 {% if user.is_teacher %}
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'setting' %}" style="color: #8a1010;{% if select_1 == "setting" %}font-weight: bold;{% endif %}">系统设置</a>
+                            <a class="nav-link {% if select == "setting" %}select{% endif %}" href="{% url 'setting' %}" >系统设置</a>
                         </li>
                         {% if user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;{% if select_1 == "account_manage" %}font-weight: bold;{% endif %}">账号管理</a>
-                            </li>
-                        {% endif %}
-                        {% if user.is_secretary %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'branch_info' %}" style="color: #8a1010;{% if select_1 == "branch_info" %}font-weight: bold;{% endif %}">我的支部</a>
+                                <a class="nav-link {% if select == "account_manage" %}select{% endif %}" href="{% url 'account_manage' %}" style="color: #8a1010;">账号管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">人员管理</a>
+                                <a class="nav-link {% if select == "user_info_manage" %}select{% endif %}" href="{% url 'user_info_manage' %}">人员管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
+                                <a class="nav-link {% if select == "branch_manage" %}select{% endif %}" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_gxh or user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
+                                <a class="nav-link {% if select == "activity_manage" %}select{% endif %}" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_gxh or user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                                <a class="nav-link {% if select == "activity_record_manage" %}select{% endif %}" href="{% url 'activity_record_manage' %}" style="color: #8a1010;">时长管理</a>
                             </li>
                         {% endif %}
                         {% if user.is_gxh or user.is_teacher %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
+                                <a class="nav-link {% if select == "course_manage" %}select{% endif %}" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_gxh or user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if select == "document_manage" %}select{% endif %}" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
                             </li>
                         {% endif %}
                     </ul>

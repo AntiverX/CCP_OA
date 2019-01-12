@@ -136,7 +136,7 @@ def joinActivity(request):
 @login_required
 def manage(request):
     context = {
-        'select': 'manage',
+        'select': 'activity_manage',
     }
     if request.method == 'GET':
         results = Activity.objects.all()
@@ -161,9 +161,10 @@ def manage(request):
         return HttpResponseRedirect("/activity/manage/")
 
 
-def audit_record(request):
+def activity_record_manage(request):
     context = {
-        'select': 'manage',
+        'select': 'activity_record_manage',
+        'select_1':"activity_record_manage",
     }
     if request.method == "GET":
         results = ActivityRecord.objects.filter(is_ok="否")
