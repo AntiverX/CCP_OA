@@ -61,7 +61,7 @@
                         <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">添加活动</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url "audit_record" %}">时长审核</a>
+                        <a class="nav-link select" href="{% url "audit_record" %}">时长审核</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="upload_file">选择文件</a>
@@ -76,9 +76,6 @@
                         <a class="nav-link" id="audit" data-toggle="modal" data-target="#exampleModalCenter"></a>
                     </li>
                 </ul>
-            </div>
-            <div class="navbar-right">
-                {% include "main_site/manage_base.html" %}
             </div>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>

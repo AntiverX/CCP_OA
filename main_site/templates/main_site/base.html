@@ -42,10 +42,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {% if select == "index" %}select{% endif %}" href="{% url 'index' %}" style="color: #8a1010">首页</a>
-                </li>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.is_teacher == False %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if select == "index" %}select{% endif %}" href="{% url 'index' %}" style="color: #8a1010">首页</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {% if select == "info" %}select{% endif %}" href="{% url 'info' %}" style="color: #8a1010;">我的信息</a>
                     </li>
@@ -63,6 +63,48 @@
                             <a class="nav-link {% if select == "manage" %}select{% endif %}" href="{% url 'manage' %}" style="color: #8a1010">系统管理</a>
                         </li>
                     {% endif %}
+                {% endif %}
+                {% if user.is_teacher %}
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'setting' %}" style="color: #8a1010;{% if select_1 == "setting" %}font-weight: bold;{% endif %}">系统设置</a>
+                        </li>
+                        {% if user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'account_manage' %}" style="color: #8a1010;{% if select_1 == "account_manage" %}font-weight: bold;{% endif %}">账号管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_secretary %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'branch_info' %}" style="color: #8a1010;{% if select_1 == "branch_info" %}font-weight: bold;{% endif %}">我的支部</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'user_info_manage' %}" style="color: #8a1010;">人员管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'branch_manage' %}" style="color: #8a1010;">支部管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_gxh or user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'activity_manage' %}" style="color: #8a1010;">活动管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_gxh or user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'course_manage' %}" style="color: #8a1010">党课管理</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_gxh or user.is_teacher %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'document_manage' %}" style="color: #8a1010">材料管理</a>
+                            </li>
+                        {% endif %}
+                    </ul>
                 {% endif %}
             </ul>
             <div class="navbar-right">

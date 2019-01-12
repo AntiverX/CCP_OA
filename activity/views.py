@@ -18,7 +18,7 @@ def index(request):
         "select_1": "index",
     }
     if request.method == "GET":
-        results = ActivityRecord.objects.filter(student_id="1120141123")
+        results = ActivityRecord.objects.filter(student_id=request.user.student_id)
         context['results'] = results
         return render(request, "activity/index.html", context=context)
     else:
