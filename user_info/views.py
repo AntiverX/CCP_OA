@@ -12,6 +12,7 @@ from CCP.common import is_teacher, is_gxh, is_secretary
 import re
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 
 
 @login_required
@@ -200,6 +201,13 @@ def user_info_manage(request):
                 data = pd.read_excel(file_name, converters={'班号': str})
                 columns_list = data.columns.values
                 for index, row in data.iterrows():
+                    # if len(CcpMember.objects.filter(student_id=row['学号'])) != 0:
+                    #     context = {
+                    #         'error':"已经有学号为{}的同学了".format(row['学号']),
+                    #         'return_url' : "user_info_manage",
+                    #     }
+                    #     return render(request,"main_site/error.html",context=context)
+
                     # 班号
                     if "班号" in columns_list:
                         related_class = "" if pd.isna(row['班号']) else row['班号']
@@ -210,7 +218,7 @@ def user_info_manage(request):
                     if "党员类型" in columns_list:
                         current_state = "" if pd.isna(row['党员类型']) else row['党员类型']
                     else:
-                        current_state = "" if pd.isna(row['状态']) else row['状态']
+                        current_state = ""
 
                     # 入党时间
                     if "申请入党时间" in columns_list:
@@ -225,7 +233,11 @@ def user_info_manage(request):
                                 try:
                                     _date = re.findall(r"[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}", row['申请入党时间'])
                                 except TypeError:
-                                    return HttpResponse(str(row['申请入党时间']) + str(type(row['申请入党时间'])))
+                                    context = {
+                                        'error':"申请入党时间错误：{}".format(row['申请入党时间']),
+                                        'return_url':"user_info_manage",
+                                    }
+                                    return render(request,"main_site/error.html",context=context)
                                 if len(_date) == 0:
                                     date = "1921-07-23"
                                 else:
@@ -242,18 +254,25 @@ def user_info_manage(request):
                     id_number = "" if pd.isna(row['身份证号码']) else row['身份证号码']
 
                     branch = "" if pd.isna(row['对应的党支部']) else row['对应的党支部']
-                    new_ccp_member = CcpMember.objects.create(
-                        student_id=row['学号'],
-                        real_name=row['姓名'],
-                        current_state=current_state,
-                        phone_number=phone_number,
-                        date=date,
-                        id_number=id_number,
-                        related_class=related_class,
-                        tutor=tutor,
-                        branch=branch,
-                    )
-                    new_ccp_member.save()
+                    try:
+                        new_ccp_member = CcpMember.objects.create(
+                            student_id=row['学号'],
+                            real_name=row['姓名'],
+                            current_state=current_state,
+                            phone_number=phone_number,
+                            date=date,
+                            id_number=id_number,
+                            related_class=related_class,
+                            tutor=tutor,
+                            branch=branch,
+                        )
+                        new_ccp_member.save()
+                    except IntegrityError:
+                        context = {
+                            'error':'''已经有学号为"{}"的同学了'''.format(row['学号']),
+                            'return_url' : "user_info_manage",
+                        }
+                        return render(request,"main_site/error.html",context=context)
             return HttpResponseRedirect("/user_info/user_info_manage/")
         else:
             new_ccp_member = CcpMember.objects.create(
