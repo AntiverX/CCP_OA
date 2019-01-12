@@ -1,16 +1,16 @@
-from django.http import HttpResponseRedirect, HttpResponse,JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from activity.models import Activity, ActivityRecord
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-import random
 from CCP.settings import BASE_DIR
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+import datetime
 
 @login_required
-# 测试用活动界面
+# 我的活动界面
 def index(request):
     context = {
         "select": "activity",
@@ -45,6 +45,50 @@ def index(request):
                 pass
         return HttpResponseRedirect("/activity/")
 
+
+# 参加活动界面
+@login_required
+def joinActivity(request):
+    context = {
+        "select": "activity",
+        "select_1":"joinActivity"
+    }
+    if request.method == "GET":
+        results = Activity.objects.all()
+        context['results'] = results
+        return render(request, "activity/attend_activity.html", context=context)
+    else:
+        target_id = request.POST['target_id']
+        target_activity = Activity.objects.get(id=target_id)
+        if datetime.datetime.now() > target_activity.close_time:
+            context['error'] = "已经过了报名时间"
+            context['return_url'] = "activity"
+            return render(request,'main_site/error.html',context=context)
+        if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
+                                             activity_name=target_activity.activity_name)) != 0:
+            context['error'] = "你已参加此活动"
+            context['return_url'] = "activity"
+            return render(request, 'main_site/error.html', context=context)
+        with transaction.atomic():
+            target_activity = Activity.objects.get(id=target_id)
+            if target_activity.present_person < target_activity.max_person:
+                target_activity.present_person = target_activity.present_person + 1
+                target_activity.save()
+            else:
+                context['error'] = "参与人数已满"
+                context['return_url'] = "activity"
+                return render(request, 'main_site/error.html', context=context)
+        new_activity_record = ActivityRecord.objects.create(
+            student_id=request.user.student_id,
+            real_name=request.user.real_name,
+            activity_name=Activity.objects.get(id=target_id).activity_name,
+            activity_time=Activity.objects.get(id=target_id).activity_time,
+            time_length=Activity.objects.get(id=target_id).time_length,
+        )
+        new_activity_record.save()
+        return HttpResponseRedirect("/activity")
+
+
 # 管理员添加活动
 @login_required
 def manage(request):
@@ -72,44 +116,6 @@ def manage(request):
         )
         new_activity.save()
         return HttpResponseRedirect("/activity/manage/")
-
-
-# 用户参加活动
-@login_required
-def joinActivity(request):
-    context = {
-        "select": "activity"
-    }
-    if request.method == "GET":
-        results = Activity.objects.all()
-        context['results'] = results
-        return render(request, "activity/attend_activity.html", context=context)
-    else:
-        target_id = request.POST['target_id']
-        target_activity = Activity.objects.get(id=target_id)
-        if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
-                                             activity_name=target_activity.activity_name)) != 0:
-            context['error'] = "你已参加此活动"
-            context['return_url'] = "activity"
-            return render(request, 'main_site/error.html', context=context)
-        with transaction.atomic():
-            target_activity = Activity.objects.get(id=target_id)
-            if target_activity.present_person < target_activity.max_person:
-                target_activity.present_person = target_activity.present_person + 1
-                target_activity.save()
-            else:
-                context['error'] = "参与人数已满"
-                context['return_url'] = "activity"
-                return render(request, 'main_site/error.html', context=context)
-        new_activity_record = ActivityRecord.objects.create(
-            student_id=request.user.student_id,
-            real_name=request.user.real_name,
-            activity_name=Activity.objects.get(id=target_id).activity_name,
-            activity_time=Activity.objects.get(id=target_id).activity_time,
-            time_length=Activity.objects.get(id=target_id).time_length,
-        )
-        new_activity_record.save()
-        return HttpResponseRedirect("/activity")
 
 
 def audit_record(request):
@@ -172,6 +178,8 @@ def audit_record(request):
             selected_record.save()
         return HttpResponseRedirect("/activity/manage/audit_record")
 
+
+# 获取单次活动信息
 @csrf_exempt
 def get_activity(request):
     if request.method == "POST":
@@ -179,6 +187,6 @@ def get_activity(request):
         existing_activity = Activity.objects.get(id=id)
         return JsonResponse(
             {
-                "content":existing_activity.content,
+                "content": existing_activity.content,
             }
         )

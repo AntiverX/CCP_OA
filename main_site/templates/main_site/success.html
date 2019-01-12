@@ -1,0 +1,14 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="card mt-5">
+            <div class="card-header">
+                成功
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ error }}</p>
+                <a href="{% url return_url %}" class="btn btn-danger">返回</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
