@@ -61,35 +61,51 @@ def joinActivity(request):
     else:
         target_id = request.POST['target_id']
         target_activity = Activity.objects.get(id=target_id)
-        if datetime.datetime.now() > target_activity.close_time:
-            context['error'] = "已经过了报名时间"
-            context['return_url'] = "activity"
-            return render(request, 'main_site/error.html', context=context)
-        if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
-                                             activity_name=target_activity.activity_name)) != 0:
-            context['error'] = "你已参加此活动"
-            context['return_url'] = "activity"
-            return render(request, 'main_site/error.html', context=context)
-        with transaction.atomic():
-            target_activity = Activity.objects.get(id=target_id)
-            if target_activity.present_person < target_activity.max_person:
-                target_activity.present_person = target_activity.present_person + 1
-                target_activity.save()
-            else:
-                context['error'] = "参与人数已满"
+        if request.POST['action'] == "join":
+            if datetime.datetime.now() > target_activity.close_time:
+                context['error'] = "已经过了报名时间"
                 context['return_url'] = "activity"
                 return render(request, 'main_site/error.html', context=context)
-        new_activity_record = ActivityRecord.objects.create(
-            student_id=request.user.student_id,
-            real_name=request.user.real_name,
-            activity_name=Activity.objects.get(id=target_id).activity_name,
-            activity_time=Activity.objects.get(id=target_id).activity_time,
-            time_length=Activity.objects.get(id=target_id).time_length,
-        )
-        new_activity_record.save()
-        context['success'] = "报名成功"
-        context['return_url'] = "joinActivity"
-        return render(request, "main_site/success.html", context=context)
+            if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
+                                                 activity_name=target_activity.activity_name)) != 0:
+                context['error'] = "你已参加此活动"
+                context['return_url'] = "activity"
+                return render(request, 'main_site/error.html', context=context)
+            with transaction.atomic():
+                target_activity = Activity.objects.get(id=target_id)
+                if target_activity.present_person < target_activity.max_person:
+                    target_activity.present_person = target_activity.present_person + 1
+                    target_activity.save()
+                else:
+                    context['error'] = "参与人数已满"
+                    context['return_url'] = "activity"
+                    return render(request, 'main_site/error.html', context=context)
+            new_activity_record = ActivityRecord.objects.create(
+                student_id=request.user.student_id,
+                real_name=request.user.real_name,
+                activity_name=Activity.objects.get(id=target_id).activity_name,
+                activity_time=Activity.objects.get(id=target_id).activity_time,
+                time_length=Activity.objects.get(id=target_id).time_length,
+            )
+            new_activity_record.save()
+            context['success'] = "报名成功"
+            context['return_url'] = "joinActivity"
+            return render(request, "main_site/success.html", context=context)
+        else:
+            try:
+                existing_record = ActivityRecord.objects.get(activity_name=target_activity.activity_name, student_id=request.user.student_id)
+                with transaction.atomic():
+                    target_activity = Activity.objects.get(id=target_id)
+                    target_activity.present_person = target_activity.present_person - 1
+                    target_activity.save()
+                existing_record.delete()
+                context['success'] = "退出成功"
+                context['return_url'] = "joinActivity"
+                return render(request, "main_site/success.html", context=context)
+            except ObjectDoesNotExist:
+                context["error"] = "你没有参加这个活动"
+                context["return_url"] = "joinActivity"
+                return render(request, "main_site/error.html", context=context)
 
 
 # 管理员添加活动
@@ -184,6 +200,7 @@ def audit_record(request):
 
 # 获取单次活动信息
 @csrf_exempt
+@login_required
 def get_activity(request):
     if request.method == "POST":
         id = request.POST['id']
@@ -193,3 +210,24 @@ def get_activity(request):
                 "content": existing_activity.content,
             }
         )
+
+
+# 获取活动参加记录
+@login_required
+@csrf_exempt
+def get_activity_record(request):
+    if request.method == "POST":
+        id = request.POST['id']
+        activity_name = Activity.objects.get(id=id).activity_name
+        if len(ActivityRecord.objects.filter(activity_name=activity_name, student_id=request.user.student_id)):
+            return JsonResponse(
+                {
+                    "join": "yes",
+                }
+            )
+        else:
+            return JsonResponse(
+                {
+                    "join": "no",
+                }
+            )

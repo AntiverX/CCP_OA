@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include,re_path
+from django.conf.urls import url, include, re_path
 
 # from django.contrib import admin
 
@@ -23,6 +23,7 @@ from activity import views
 urlpatterns = [
     re_path(r"^manage/$", views.manage, name="activity_manage"),
     re_path(r"^get_activity$", views.get_activity),
+    re_path(r"^get_activity_record$", views.get_activity_record),
     re_path(r"joinActivity", views.joinActivity, name="joinActivity"),
     re_path(r"^manage/audit_record$", views.audit_record, name="audit_record"),
     re_path(r"^$", views.index, name="activity"),

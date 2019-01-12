@@ -1,30 +1,10 @@
 {% extends "activity/base.html" %}
 {% block content_1 %}
-    <script>
-        $(document).ready(function () {
-            /* 点击某一行显示修改和删除按钮 */
-            $(".card").click(function () {
-                    $('#modal').modal();
-                    target_id = $(this).attr("id");
-            });
-
-            $("#submit").click(function (event) {
-                event.preventDefault();
-                var csrf_token = $("[name='csrfmiddlewaretoken']").val();
-                var data ={
-                    "target_id": target_id,
-                    "csrfmiddlewaretoken" : csrf_token
-                }
-                $.post("/activity/joinActivity",data,function (data) {
-                    document.write(data);
-                })
-            })
-        });
-    </script>
+{% load static %}
+    <script src ="{% static "js/join_activity.js" %}"></script>
     <style>
-        .modal-dialog.modal-800 {
-            width: 1100px;
-            max-width: 1100px;
+        p {
+            margin-bottom: 10px;
         }
     </style>
 
@@ -46,7 +26,7 @@
                                 <input id="target_id" name="target_id" value="" hidden>
                                 {% csrf_token %}
                                 <div class="row">
-                                    <div class="col-12">请确认是否参加此次活动！</div>
+                                    <div class="col-12" id="prompt">请确认是否参加此次活动！</div>
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -65,7 +45,6 @@
         {% for result in results %}
             <div class="card mt-3" id="{{ result.id }}">
                 <h6 class="card-header bg-white">{{ result.activity_name }}
-                    <span class="badge badge-danger">{{ result.present_person }}/{{ result.max_person }}</span>
                 </h6>
                 <div class="card-body">
                     <div class="container">
@@ -75,6 +54,7 @@
                                 <p class="col-12">活动开始时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
                                 <p class="col-12">时长: {{ result.time_length }}小时</p>
                                 <p class="col-12">发布人: {{ result.publisher }}</p>
+                                <p class="col-12">报名人数: {{ result.present_person }}/{{ result.max_person }}</p>
                             </div>
                             <div class="col-xl-6">
                                 <p class="col-12">活动内容: {{ result.content }}</p>
