@@ -1,7 +1,7 @@
 {% extends "activity/base.html" %}
 {% block content_1 %}
-{% load static %}
-    <script src ="{% static "js/join_activity.js" %}"></script>
+    {% load static %}
+    <script src="{% static "js/join_activity.js" %}"></script>
     <style>
         p {
             margin-bottom: 10px;
@@ -16,7 +16,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalCenterTitle">参加活动</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -35,6 +35,31 @@
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="response_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="response_modal_title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-12" id="response_modal_prompt">请确认是否参加此次活动！</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                            </div>
                         </div>
                     </div>
                 </div>

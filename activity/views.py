@@ -61,25 +61,35 @@ def joinActivity(request):
     else:
         target_id = request.POST['target_id']
         target_activity = Activity.objects.get(id=target_id)
+        # 参加活动
         if request.POST['action'] == "join":
             if datetime.datetime.now() > target_activity.close_time:
-                context['error'] = "已经过了报名时间"
-                context['return_url'] = "activity"
-                return render(request, 'main_site/error.html', context=context)
+                return JsonResponse(
+                    {
+                        'title': "报名失败",
+                        'content': "已经过了报名时间"
+                    }
+                )
             if len(ActivityRecord.objects.filter(real_name=request.user.real_name, student_id=request.user.student_id,
                                                  activity_name=target_activity.activity_name)) != 0:
-                context['error'] = "你已参加此活动"
-                context['return_url'] = "activity"
-                return render(request, 'main_site/error.html', context=context)
+                return JsonResponse(
+                    {
+                        'title': "报名失败",
+                        'content': "你已参加此活动"
+                    }
+                )
             with transaction.atomic():
                 target_activity = Activity.objects.get(id=target_id)
                 if target_activity.present_person < target_activity.max_person:
                     target_activity.present_person = target_activity.present_person + 1
                     target_activity.save()
                 else:
-                    context['error'] = "参与人数已满"
-                    context['return_url'] = "activity"
-                    return render(request, 'main_site/error.html', context=context)
+                    return JsonResponse(
+                        {
+                            'title': "报名失败",
+                            'content': "参与人数已满"
+                        }
+                    )
             new_activity_record = ActivityRecord.objects.create(
                 student_id=request.user.student_id,
                 real_name=request.user.real_name,
@@ -88,10 +98,21 @@ def joinActivity(request):
                 time_length=Activity.objects.get(id=target_id).time_length,
             )
             new_activity_record.save()
-            context['success'] = "报名成功"
-            context['return_url'] = "joinActivity"
-            return render(request, "main_site/success.html", context=context)
+            return JsonResponse(
+                {
+                    'title':"报名成功",
+                    'content':"你已经报名成功"
+                }
+            )
+        # 退出活动
         else:
+            if datetime.datetime.now() > target_activity.close_time:
+                return JsonResponse(
+                    {
+                        'title': "退出失败",
+                        'content': "已经过了报名时间"
+                    }
+                )
             try:
                 existing_record = ActivityRecord.objects.get(activity_name=target_activity.activity_name, student_id=request.user.student_id)
                 with transaction.atomic():
@@ -99,9 +120,12 @@ def joinActivity(request):
                     target_activity.present_person = target_activity.present_person - 1
                     target_activity.save()
                 existing_record.delete()
-                context['success'] = "退出成功"
-                context['return_url'] = "joinActivity"
-                return render(request, "main_site/success.html", context=context)
+                return JsonResponse(
+                    {
+                        'title': "退出成功",
+                        'content': "你已经退出该活动"
+                    }
+                )
             except ObjectDoesNotExist:
                 context["error"] = "你没有参加这个活动"
                 context["return_url"] = "joinActivity"

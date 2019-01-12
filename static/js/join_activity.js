@@ -22,20 +22,29 @@ $(document).ready(function () {
             action = "quit"
         }
         $('#modal').modal();
+        console.log($('#modal').modal().text());
         target_id = $(this).attr("id");
-        console.log(action);
     });
 
     $("#submit").click(function (event) {
+        $("#close").click();
         event.preventDefault();
         var csrf_token = $("[name='csrfmiddlewaretoken']").val();
         var data = {
             "target_id": target_id,
-            "action":action,
+            "action": action,
             "csrfmiddlewaretoken": csrf_token,
         }
         $.post("/activity/joinActivity", data, function (data) {
-            document.write(data);
+            $("#response_modal_title").text(data.title);
+            $("#response_modal_prompt").text(data.content);
+            $("#response_modal").modal();
         })
+
+
+    })
+
+    $('#response_modal').on('hidden.bs.modal', function (e) {
+        location.reload();
     })
 });
