@@ -24,7 +24,7 @@ def is_secretary(function):
         else:
             context = {
                 'error': "你无权访问此页面",
-                'return_url': "manage",
+                'return_url': "index",
             }
             return render(request, 'main_site/error.html', context=context)
 
@@ -38,7 +38,7 @@ def is_gxh(function):
         else:
             context = {
                 'error': "你无权访问此页面",
-                'return_url': "manage",
+                'return_url': "index",
             }
             return render(request, 'main_site/error.html', context=context)
 
@@ -52,7 +52,7 @@ def is_teacher(function):
         else:
             context = {
                 'error': "你无权访问此页面",
-                'return_url': "manage",
+                'return_url': "index",
             }
             return render(request, 'main_site/error.html', context=context)
 

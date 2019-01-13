@@ -8,7 +8,7 @@ import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from CCP.common import is_teacher
+from CCP.common import is_teacher,is_gxh
 
 
 @login_required
@@ -134,7 +134,7 @@ def joinActivity(request):
 
 
 # 活动列表
-@is_teacher
+@is_gxh
 def activity_list(request):
     context = {
         'select': 'activity_manage',
@@ -174,13 +174,13 @@ def activity_list(request):
 
 # 添加活动
 @login_required
-def manage(request):
+def add_activity(request):
     context = {
         'select': 'activity_manage',
-        'select_1': "activity_manage",
+        'select_1': "add_activity",
     }
     if request.method == 'GET':
-        return render(request, "activity/activity_manage.html", context=context)
+        return render(request, "activity/add_activity.html", context=context)
     else:
         activity_name = request.POST['activity_name']
         time_length = request.POST['time_length']
@@ -200,17 +200,17 @@ def manage(request):
         new_activity.save()
         return HttpResponseRedirect("/activity/activity_list")
 
-
-def activity_record_manage(request):
+# 审计时长
+def audit_record(request):
     context = {
-        'select': 'activity_record_manage',
-        'select_1': "activity_record_manage",
+        'select': 'record_manage',
+        'select_1': "audit_record",
     }
     if request.method == "GET":
         results = ActivityRecord.objects.filter(is_ok=False)
         context['results'] = results
         context['auditor'] = request.user.real_name
-        return render(request, "activity/record_manage.html", context=context)
+        return render(request, "activity/audit_record.html", context=context)
     else:
         file = request.FILES.get('file')
         # 上传活动时长记录
@@ -260,6 +260,61 @@ def activity_record_manage(request):
             selected_record.auditor = auditor
             selected_record.is_ok = "是"
             selected_record.save()
+        return HttpResponseRedirect("/activity/manage/audit_record")
+
+# 记录管理
+def activity_record_manage(request):
+    context = {
+        'select': 'record_manage',
+        'select_1': "activity_record_manage",
+    }
+    if request.method == "GET":
+        results = ActivityRecord.objects.filter(is_ok=False)
+        context['results'] = results
+        context['auditor'] = request.user.real_name
+        return render(request, "activity/activity_record_manage.html", context=context)
+    else:
+        file = request.FILES.get('file')
+        # 上传活动时长记录
+        if file is not None:
+            with transaction.atomic():
+                if request.POST['is_cover'] == "1":
+                    ActivityRecord.objects.all().delete()
+                file_name = BASE_DIR + "/static/cache/" + "activity_record.xlsx"
+                with open(file_name.encode(), "wb+") as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                data = pd.read_excel(file_name)
+                columns_list = data.columns.values.tolist()
+                columns_list.remove("学号")
+                columns_list.remove("姓名")
+                columns_list.remove("总时长")
+                for index, row in data.iterrows():
+                    student_id = row["学号"]
+                    real_name = row["姓名"]
+                    for column in columns_list:
+                        # 如果时长是0，就不再添加了
+                        if row[column] == 0:
+                            continue
+                        try:
+                            existing_activity = Activity.objects.get(activity_name=column)
+                            activity_time = existing_activity.activity_time
+                            time_length = existing_activity.time_length
+                        except ObjectDoesNotExist:
+                            activity_time = "1921-07-23"
+                            time_length = row[column]
+                        new_activity_record = ActivityRecord.objects.create(
+                            student_id=student_id,
+                            real_name=real_name,
+                            activity_name=column,
+                            joinTime=activity_time,
+                            activity_time=activity_time,
+                            time_length=time_length,
+                            is_ok=True,
+                            auditor="",
+
+                        )
+                        new_activity_record.save()
         return HttpResponseRedirect("/activity/manage/audit_record")
 
 

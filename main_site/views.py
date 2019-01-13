@@ -1,6 +1,9 @@
 from django.shortcuts import render, HttpResponseRedirect
-from user_info.models import User
 from django.contrib.auth.decorators import login_required
+from .models import Setting
+from CCP.common import is_gxh
+from django.core.management import call_command
+from django.contrib.sessions.models import Session
 
 context = {}
 
@@ -22,10 +25,22 @@ def manage(request):
     return render(request, "main_site/manage.html", context=context)
 
 
-@login_required
+@is_gxh
 def setting(request):
     context = {
-        'select':"setting",
-        "select_1":""
+        'select': "setting",
+        "select_1": ""
     }
-    return render(request, "main_site/manage.html", context=context)
+    if request.method == "GET":
+        is_closed = Setting.objects.get(setting_name="is_closed")
+        context['is_closed'] = is_closed.setting_value
+        return render(request, "main_site/manage.html", context=context)
+    else:
+        is_closed = request.POST['is_closed']
+        existing_is_closed = Setting.objects.get(setting_name="is_closed")
+        existing_is_closed.setting_value = is_closed
+        existing_is_closed.save()
+        if existing_is_closed.setting_value == "True":
+            # call_command("clearsessions")
+            [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_hash') != request.user.get_session_auth_hash()]
+        return HttpResponseRedirect("/system/setting")

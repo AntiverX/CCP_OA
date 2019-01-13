@@ -1,5 +1,16 @@
 {% extends "main_site/base.html" %}
 {% block content %}
+    <style>
+        body {
+            background-image: url("/static/bg1.jpg");
+            background-size: auto auto;
+            background-repeat: no-repeat;
+        }
+
+        #menu {
+            background-color: transparent !important;
+        }
+    </style>
     <script>
         $(document).ready(function () {
             /* 表单验证 */
@@ -13,10 +24,9 @@
                     if (password == password_) {
                         $(this).removeClass("is-invalid");
                         $(this).addClass("is-valid");
-                    }
-                    else {
-                         $(this).removeClass("is-valid");
-                         $(this).addClass("is-invalid");
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
                         $("#submitForm").attr("disabled", true);
                     }
                     return
@@ -33,8 +43,7 @@
                     if (result == "OK") {
                         parent.removeClass("is-invalid");
                         parent.addClass("is-valid");
-                    }
-                    else {
+                    } else {
                         $("#" + class_name + "-invalid").text(result);
                         parent.removeClass("is-valid");
                         parent.addClass("is-invalid");
@@ -54,8 +63,7 @@
                 });
                 if (form_complete) {
                     $("#submitForm").attr("disabled", false);
-                }
-                else {
+                } else {
                     $("#submitForm").attr("disabled", true);
                 }
             });
@@ -63,7 +71,7 @@
     </script>
 
 
-    <div class="container mt-5">
+    <div class="container mt-5" style="margin-bottom: 10vh">
         <form class="align-items-end" action="{% url 'register' %}" method="post">
             {% csrf_token %}
             <div class="form-group">

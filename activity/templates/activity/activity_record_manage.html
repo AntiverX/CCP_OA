@@ -1,0 +1,69 @@
+{% extends "main_site/base.html" %}
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#CoverRecord").click(function (event) {
+                event.preventDefault();
+                alert("go");
+                $("#is_cover").val("1");
+                $("#target_form").submit();
+            });
+
+            $("#submitRecord").click(function (event) {
+                event.preventDefault();
+                $("#is_cover").val("0");
+                $("#target_form").submit();
+            });
+        });
+    </script>
+    <style>
+        .modal-dialog.modal-800 {
+            width: 1100px;
+            max-width: 1100px;
+        }
+    </style>
+
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "audit_record" %}select{% endif %}" href="{% url "audit_record" %}">时长审核</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if select_1 == "activity_record_manage" %}select{% endif %}" href="{% url "activity_record_manage" %}">记录管理</a>
+                </li>
+            </ul>
+        </nav>
+        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+        <div class="container mt-3">
+            <form method="POST" id="target_form" enctype="multipart/form-data">
+                <input type="text" id="is_cover" name="is_cover" class="form-control" value="0" hidden>
+                <div class="row">
+                    <label for="file">老式记录上传</label>
+                    <input type="file" class="form-control" id="file" name="file">
+                </div>
+                <div class="row">
+                    <p>老式记录样式如下</p>
+                </div>
+                <div class="row">
+                    {% load static %}
+                    <img id="img" class="rounded mx-auto d-block"  src="{% static "old_style_record.jpg" %}" alt="Responsive image">
+                </div>
+                {% csrf_token %}
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-danger" id="CoverRecord">覆盖</button>
+                        <button class="btn btn-danger ml-2" id="submitRecord">追加</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    </div>
+    </div>
+    </div>
+{% endblock %}

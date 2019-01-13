@@ -1,5 +1,18 @@
 {% extends "main_site/base.html" %}
 {% block content %}
+    <script>
+    $(document).ready(function () {
+        $("#close").click(function (event) {
+            event.preventDefault();
+            var is_closed = $("#is_closed").val();
+            if(is_closed == "True")
+                $("#is_closed").val("False");
+            else
+                $("#is_closed").val("True");
+            $("#form").submit();
+        });
+    });
+    </script>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -9,5 +22,18 @@
             </ul>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
+
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-4">
+                    <form method="post" id="form">
+                        {% csrf_token %}
+                        <input id="is_closed" name="is_closed" value="{{is_closed }}" hidden>
+                        <button type="submit" id="close" class="btn btn-danger">{% if is_closed == "False" %}关闭网站{% else %}开启网站{% endif %}</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
 {% endblock %}

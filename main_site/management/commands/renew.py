@@ -4,6 +4,8 @@ from CCP.settings import BASE_DIR
 import os
 from django.core.management import call_command
 import stat
+from main_site.models import Setting
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -23,4 +25,6 @@ class Command(BaseCommand):
             pass
         call_command('makemigrations')
         call_command('migrate')
-        os.chmod(os.path.join(BASE_DIR, 'db.sqlite3'),stat.S_IRWXO)
+        os.chmod(os.path.join(BASE_DIR, 'db.sqlite3'), stat.S_IRWXO)
+        setting = Setting.objects.create(setting_name="is_closed", setting_value="False")
+        setting.save()

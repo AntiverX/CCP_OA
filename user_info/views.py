@@ -13,6 +13,7 @@ import re
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from main_site.models import Setting
 
 
 @login_required
@@ -112,23 +113,37 @@ def index(request):
         return HttpResponseRedirect("/user_info")
 
 
+# 登录
 def auth(request):
     context = {}
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        existing_is_closed = Setting.objects.get(setting_name="is_closed")
         if user is not None:
-            login(request, user)
-            return HttpResponseRedirect("/user_info")
+
+            if user.is_gxh or user.is_teacher:
+                login(request, user)
+                return HttpResponseRedirect("/system/setting")
+            else:
+                if existing_is_closed.setting_value == "True":
+                    context['error'] = "网站正在维护"
+                    context['return_url'] = "index"
+                    return render(request, "main_site/error.html", context=context)
+                else:
+                    login(request, user)
+                    return HttpResponseRedirect("/user_info")
         else:
             context['error'] = "用户名或密码错误"
             context['return_url'] = "index"
             return render(request, "main_site/error.html", context=context)
     else:
-        return render(request, 'user_info/login.html', context=context)
+        return HttpResponseRedirect("/")
 
 
+# 注销
+@login_required
 def deauth(request):
     logout(request)
     return HttpResponseRedirect("/")
@@ -144,15 +159,20 @@ def register(request):
         password = request.POST['password']
         real_name = request.POST['real_name']
         student_id = request.POST['student_id']
-        new_user = User.objects.create_user(
-            username=username,
-            email=e_mail,
-            password=password,
-            real_name=real_name,
-            student_id=student_id,
-        )
-        new_user.save()
-        return HttpResponseRedirect("/user_info/login")
+        if len(User.objects.filter(student_id=student_id)) != 0:
+            context['error'] = "你的党员信息已经有账号绑定，用户名是{},如有问题请联系共学会".format(User.objects.get(student_id=student_id).username)
+            context['return_url'] = "index"
+            return render(request,"main_site/error.html",context=context)
+        else:
+            new_user = User.objects.create_user(
+                username=username,
+                email=e_mail,
+                password=password,
+                real_name=real_name,
+                student_id=student_id,
+            )
+            new_user.save()
+            return HttpResponseRedirect("/")
 
 
 # 账号管理

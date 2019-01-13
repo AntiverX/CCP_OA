@@ -126,4 +126,4 @@ STATICFILES_DIRS = [
     '/var/www/static/',
 ]
 
-LOGIN_URL = '/user_info/login'
+LOGIN_URL = '/'

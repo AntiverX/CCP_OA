@@ -25,8 +25,8 @@
     <img class="top-image" src="{% static "logo_index.png" %}"/>
 </div>
 <div class="content">
-    <div class="container col-md-3" style="margin-top: 180px">
-        <form class="align-items-end" style="margin-top: 5em;" method="post" action="{% url "login" %}">
+    <div class="container col-md-3" style="margin-top: 20vh">
+        <form class="align-items-end" method="post" action="{% url "login" %}">
             <div class="form-group">
                 {% csrf_token %}
                 <label for="exampleInputEmail1">用户名</label>
@@ -43,11 +43,17 @@
                 </div>
             </div>
         </form>
+        <div class="alert alert-danger" role="alert">
+            新用户请进行注册
+        </div>
+        <div class="alert alert-danger" role="alert">
+            平台处于试运行阶段，如有问题请发送邮件至：shuaipeng.wong@gmail.com.
+        </div>
     </div>
-</div>
-<div class="bottom">
-    {% load static %}
-    <img class="bottom-image" src="{% static "background.png" %}"/>
+    <div class="bottom">
+        {% load static %}
+        <img class="bottom-image" src="{% static "background.png" %}"/>
+    </div>
 </div>
 </body>
 </html>
