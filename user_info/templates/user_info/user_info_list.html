@@ -1,5 +1,42 @@
 {% extends "main_site/base.html" %}
 {% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#previous").click(function () {
+                if ($("#page").val() == 1) {
+
+                } else {
+                    $("#page").val(Number($("#page").val()) - 1);
+                }
+                update_table();
+            });
+
+            $("#next").click(function () {
+                $("#page").val(Number($("#page").val()) + 1);
+                update_table();
+            });
+
+            function update_table() {
+                var page = $("#page").val();
+                $.post("/user_info/get_ccp_member_list/", {"page": page}, function (data) {
+                    $("#content").empty();
+                    for (i = 0; i < data.length; i++) {
+                        var tr = $("<tr></tr>");
+                        tr.append($("<td></td>").text(data[i]["student_id"]));
+                        tr.append($("<td></td>").text(data[i]["real_name"]));
+                        tr.append($("<td></td>").text(data[i]["related_class"]));
+                        tr.append($("<td></td>").text(data[i]["tutor"]));
+                        tr.append($("<td></td>").text(data[i]["id_number"]));
+                        tr.append($("<td></td>").text(data[i]["phone_number"]));
+                        tr.append($("<td></td>").text(data[i]["current_state"]));
+                        tr.append($("<td></td>").text(data[i]["date"]));
+                        tr.append($("<td></td>").text(data[i]["sponsor"]));
+                        $("#content").append(tr);
+                    }
+                });
+            }
+        });
+    </script>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -27,10 +64,11 @@
                     <th scope="col" nowrap>联系电话</th>
                     <th scope="col" nowrap>状态</th>
                     <th scope="col" nowrap>申请入党时间</th>
+                    <th scope="col" nowrap>入党时间</th>
                     <th scope="col" nowrap>介绍人</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="content">
                 {% for result in results %}
                     <tr title="{{ result.id }}">
                         <td nowrap>{{ result.student_id }}</td>
@@ -40,6 +78,7 @@
                         <td nowrap>{{ result.id_number }}</td>
                         <td nowrap>{{ result.phone_number }} </td>
                         <td nowrap>{{ result.current_state }} </td>
+                        <td nowrap>{{ result.application_date|date:"Y-m-d" }} </td>
                         <td nowrap>{{ result.date|date:"Y-m-d" }} </td>
                         <td nowrap>{{ result.sponsor }} </td>
                     </tr>
@@ -47,5 +86,18 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <div class="container">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <input type="text" id="page" value="1" hidden>
+                <li class="page-item"><a class="page-link" id="previous">上一页</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="next">下一页</a></li>
+            </ul>
+        </nav>
     </div>
 {% endblock %}

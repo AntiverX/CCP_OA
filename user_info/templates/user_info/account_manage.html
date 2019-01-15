@@ -29,10 +29,10 @@
                 $("#email").val(email);
                 $("#real_name").val(real_name);
                 $("#student_id").val(student_id);
-                $("#is_admin").val(is_admin == "是"?1:0);
-                $("#is_gxh").val(is_gxh == "是"?1:0);
-                $("#is_teacher").val(is_teacher == "是"?1:0);
-                $("#is_secretary").val(is_secretary == "是"?1:0);
+                $("#is_admin").val(is_admin == "是" ? 1 : 0);
+                $("#is_gxh").val(is_gxh == "是" ? 1 : 0);
+                $("#is_teacher").val(is_teacher == "是" ? 1 : 0);
+                $("#is_secretary").val(is_secretary == "是" ? 1 : 0);
             });
 
             /* 删除功能 */
@@ -63,14 +63,14 @@
     </style>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item operation">
-                        <a class="nav-link" data-toggle="modal" id="modifyInfo" data-target="#exampleModalCenter">修改</a>
-                    </li>
-                    <li class="nav-item operation" >
-                        <a class="nav-link" id="deleteInfo">删除</a>
-                    </li>
-                </ul>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item operation">
+                    <a class="nav-link" data-toggle="modal" id="modifyInfo" data-target="#exampleModalCenter">修改</a>
+                </li>
+                <li class="nav-item operation">
+                    <a class="nav-link" id="deleteInfo">删除</a>
+                </li>
+            </ul>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
     </div>
@@ -185,5 +185,16 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="container">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </nav>
     </div>
 {% endblock %}

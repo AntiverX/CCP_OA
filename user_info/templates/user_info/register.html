@@ -71,72 +71,91 @@
     </script>
 
 
-    <div class="container mt-5" style="margin-bottom: 10vh">
-        <form class="align-items-end" action="{% url 'register' %}" method="post">
+    <div class="container mt-5 " style="margin-bottom: 5vh">
+        <form class="" action="{% url 'register' %}" method="post">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-                <div id="username-valid" class="valid-feedback">
-                    用户名可用
-                </div>
-                <div id="username-invalid" class="invalid-feedback">
-                    ERROR
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="email">邮箱</label>
-                <input type="text" class="form-control" id="email" name="email" required>
-                <div id="username-valid" class="valid-feedback">
-                    邮箱
-                </div>
-                <div id="username-invalid" class="invalid-feedback">
-                    ERROR
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="username">用户名</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <div id="username-valid" class="valid-feedback">
+                        用户名可用
+                    </div>
+                    <div id="username-invalid" class="invalid-feedback">
+                        ERROR
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="password">密码</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-                <div id="password-valid" class="valid-feedback">
-                    密码可用
-                </div>
-                <div id="password-invalid" class="invalid-feedback">
-                    请输入一个可用的密码
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="password">再次输入密码</label>
-                <input type="password" class="form-control" id="password_" required>
-                <div id="password-valid" class="valid-feedback">
-                    密码可用
-                </div>
-                <div id="password-invalid" class="invalid-feedback">
-                    密码不一致
+
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="email">邮箱</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
+                    <div id="username-valid" class="valid-feedback">
+                        邮箱
+                    </div>
+                    <div id="username-invalid" class="invalid-feedback">
+                        ERROR
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="real_name">姓名</label>
-                <input class="form-control" id="real_name" name="real_name" required>
-                <div id="real_name-valid" class="valid-feedback">
-                    名字没问题
-                </div>
-                <div id="real_name-invalid" class="invalid-feedback">
-                    请输入一个可用的密码
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="student_id">学号</label>
-                <input class="form-control" id="student_id" name="student_id" required>
-                <div id="student_id-valid" class="valid-feedback">
-                    学号可用
-                </div>
-                <div id="student_id-invalid" class="invalid-feedback">
-                    请输入一个可用的密码
+
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="password">密码</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div id="password-valid" class="valid-feedback">
+                        密码可用
+                    </div>
+                    <div id="password-invalid" class="invalid-feedback">
+                        请输入一个可用的密码
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-1">
-                    <button type="submit" id="submitForm" class="btn btn-danger">注册</button>
+
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="password">再次输入密码</label>
+                    <input type="password" class="form-control" id="password_" required>
+                    <div id="password-valid" class="valid-feedback">
+                        密码可用
+                    </div>
+                    <div id="password-invalid" class="invalid-feedback">
+                        密码不一致
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="real_name">姓名</label>
+                    <input class="form-control" id="real_name" name="real_name" required>
+                    <div id="real_name-valid" class="valid-feedback">
+                        名字没问题
+                    </div>
+                    <div id="real_name-invalid" class="invalid-feedback">
+                        请输入一个可用的密码
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-md-center">
+                <div class="form-group col-lg-4">
+                    <label for="student_id">学号</label>
+                    <input class="form-control" id="student_id" name="student_id" required>
+                    <div id="student_id-valid" class="valid-feedback">
+                        学号可用
+                    </div>
+                    <div id="student_id-invalid" class="invalid-feedback">
+                        请输入一个可用的密码
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-md-center">
+                <div class="col-lg-4">
+                    <button style="width: 100%" type="submit" id="submitForm" class="btn btn-danger">注册</button>
                 </div>
             </div>
         </form>

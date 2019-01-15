@@ -13,19 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url, include, re_path
 # from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'register', views.register, name="register"),
-    url(r'login/', views.auth, name="login"),
-    url(r'account_manage/', views.account_manage, name="account_manage"),
-    url(r'user_info/', views.user_info_list, name="user_info"),
-    url(r'user_info_list/', views.user_info_list, name="user_info_list"),
-    url(r'user_info_manage/', views.user_info_manage, name="user_info_manage"),
-    url(r'branch_manage/', views.branch_manage, name="branch_manage"),
-    url(r'branch_info/', views.branch_info, name="branch_info"),
-    url(r'valid/', views.valid, name="valid"),
-    url(r'^$', views.index, name="info"),
+    re_path(r'register', views.register, name="register"),
+    re_path(r'login/', views.auth, name="login"),
+    re_path(r'account_manage/', views.account_manage, name="account_manage"),
+    re_path(r'user_info/', views.user_info_list, name="user_info"),
+    re_path(r'user_info_list/', views.user_info_list, name="user_info_list"),
+    re_path(r'get_ccp_member_list/', views.get_ccp_member_list),
+    re_path(r'user_info_manage/', views.user_info_manage, name="user_info_manage"),
+    re_path(r'branch_manage/', views.branch_manage, name="branch_manage"),
+    re_path(r'branch_info/', views.branch_info, name="branch_info"),
+    re_path(r'valid/', views.valid, name="valid"),
+    re_path(r'^$', views.index, name="info"),
 ]

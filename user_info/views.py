@@ -1,4 +1,5 @@
-from django.shortcuts import render, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from .models import User, CcpMember, Branch
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,10 +15,14 @@ import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from main_site.models import Setting
+from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 
 
 @login_required
 def index(request):
+    if request.user.is_gxh or request.user.is_teacher:
+        return HttpResponseRedirect("http://ccp.ibiter.org/system/setting")
     if request.method == "GET":
         if len(CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)) != 0:
             ccp_member = CcpMember.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name)[0]
@@ -26,7 +31,7 @@ def index(request):
 
         # 得到申请入党日期date_1
         if ccp_member is not None:
-            date_1 = ccp_member.date
+            date_1 = ccp_member.application_date
         elif len(DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")) != 0:
             date_1 = DocumentInfo.objects.filter(student_id=request.user.student_id, real_name=request.user.real_name, name="入党志愿书")[0].date
         else:
@@ -162,7 +167,7 @@ def register(request):
         if len(User.objects.filter(student_id=student_id)) != 0:
             context['error'] = "你的党员信息已经有账号绑定，用户名是{},如有问题请联系共学会".format(User.objects.get(student_id=student_id).username)
             context['return_url'] = "index"
-            return render(request,"main_site/error.html",context=context)
+            return render(request, "main_site/error.html", context=context)
         else:
             new_user = User.objects.create_user(
                 username=username,
@@ -201,18 +206,66 @@ def account_manage(request):
 
 
 # 党员列表
+@is_gxh
 def user_info_list(request):
     context = {}
     if request.method == "GET":
         context['select'] = "user_info"
         context['select_1'] = "user_info_list"
-        context['results'] = CcpMember.objects.all()
+        context['results'] = CcpMember.objects.all()[0:10]
         return render(request, "user_info/user_info_list.html", context=context)
+
+
+# 获得指定数量的党员列表
+@csrf_exempt
+@is_gxh
+def get_ccp_member_list(request):
+    if request.method == "POST":
+        page = request.POST['page']
+        results = CcpMember.objects.all()[10 * (int(page) - 1):10 * int(page)]
+        results_dict = []
+        for result in results:
+            results_dict.append({
+                "student_id": result.student_id,
+                "real_name": result.real_name,
+                "related_class": result.related_class,
+                "tutor": result.tutor,
+                "id_number": result.id_number,
+                "phone_number": result.phone_number,
+                "current_state": result.current_state,
+                "date": result.date,
+                "sponsor": result.sponsor,
+            })
+        return JsonResponse(results_dict, safe=False)
 
 
 # 上传党员信息
 @is_teacher
 def user_info_manage(request):
+    # 用来匹配日期的函数
+    def parse_date(date: str, default="1921-07-23") -> str:
+        if pd.isna(date):
+            date = default
+        else:
+            _date = re.findall(r"[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}", date)
+            if len(_date) == 0:
+                date = default
+            else:
+                try:
+                    date = datetime.datetime.strptime(_date[0], "%Y-%m-%d")
+                except ValueError:
+                    try:
+                        date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
+                    except ValueError:
+                        try:
+                            date = datetime.datetime.strptime(_date[0], "%Y.%m.%d")
+                        except ValueError:
+                            try:
+                                date = datetime.datetime.strptime(_date[0], "%Y年%m月%d")
+                            except:
+                                date = default
+        return date
+
     context = {}
     if request.method == "GET":
         context['select'] = "user_info"
@@ -228,38 +281,27 @@ def user_info_manage(request):
                 with open(file_name.encode(), "wb+") as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
-                data = pd.read_excel(file_name, converters={'班号': str})
+                data = pd.read_excel(file_name, converters={'班号': str, '入党日期': str, '申请入党时间': str})
                 columns_list = data.columns.values
                 for index, row in data.iterrows():
+                    # 如果记录重复，则提交的记录为党员是积极分子时的记录
                     if len(CcpMember.objects.filter(student_id=row['学号'])) != 0:
                         existing_reocrd = CcpMember.objects.get(student_id=row['学号'])
                         if "申请入党时间" in columns_list:
-                            if isinstance(row['申请入党时间'], datetime.datetime):
-                                date = row['申请入党时间']
-                            else:
-                                # 入党时间为空
-                                if pd.isna(row['申请入党时间']):
-                                    date = "1921-07-23"
-                                # 入党时间包含其他字符
-                                else:
-                                    try:
-                                        _date = re.findall(r"[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}", row['申请入党时间'])
-                                    except TypeError:
-                                        context = {
-                                            'error': "申请入党时间错误：{}".format(row['申请入党时间']),
-                                            'return_url': "user_info_manage",
-                                        }
-                                        return render(request, "main_site/error.html", context=context)
-                                    if len(_date) == 0:
-                                        date = "1921-07-23"
-                                    else:
-                                        try:
-                                            date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
-                                        except:
-                                            date = datetime.datetime.strptime(_date[0], "%Y.%m.%d")
-                            existing_reocrd.date = date
+                            date = parse_date(row["申请入党时间"])
+                        else:
+                            date = "1921-07-23"
+                        existing_reocrd.application_date = date
+                        try:
                             existing_reocrd.save()
+                        except:
+                            context = {
+                                'error': "申请入党时间错误，入党时间内容为：{}，格式为：{}".format(row["申请入党时间"], type(row["申请入党时间"])),
+                                'return_url': "user_info_manage",
+                            }
+                            return render(request, "main_site/error.html", context=context)
                         continue
+
                     # 班号
                     if "班号" in columns_list:
                         related_class = "" if pd.isna(row['班号']) else row['班号']
@@ -273,32 +315,16 @@ def user_info_manage(request):
                         current_state = "积极分子"
 
                     # 入党时间
-                    if "申请入党时间" in columns_list:
-                        if isinstance(row['申请入党时间'], datetime.datetime):
-                            date = row['申请入党时间']
-                        else:
-                            # 入党时间为空
-                            if pd.isna(row['申请入党时间']):
-                                date = "1921-07-23"
-                            # 入党时间包含其他字符
-                            else:
-                                try:
-                                    _date = re.findall(r"[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}", row['申请入党时间'])
-                                except TypeError:
-                                    context = {
-                                        'error': "申请入党时间错误：{}".format(row['申请入党时间']),
-                                        'return_url': "user_info_manage",
-                                    }
-                                    return render(request, "main_site/error.html", context=context)
-                                if len(_date) == 0:
-                                    date = "1921-07-23"
-                                else:
-                                    try:
-                                        date = datetime.datetime.strptime(_date[0], "%Y/%m/%d")
-                                    except:
-                                        date = datetime.datetime.strptime(_date[0], "%Y.%m.%d")
+                    if "入党日期" in columns_list:
+                        date = parse_date(row["入党日期"])
                     else:
                         date = "1921-07-23"
+
+                    # 申请入党时间
+                    if "申请入党日期" in columns_list:
+                        application_date = parse_date(row["申请入党日期"])
+                    else:
+                        application_date = "1921-07-23"
 
                     # 导师
                     if "导师" in columns_list:
@@ -320,6 +346,7 @@ def user_info_manage(request):
                             related_class=related_class,
                             tutor=tutor,
                             branch=branch,
+                            application_date=application_date,
                         )
                         new_ccp_member.save()
                     except IntegrityError:

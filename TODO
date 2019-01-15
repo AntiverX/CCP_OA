@@ -1,9 +1,9 @@
 # TODO 短信通知功能
 # TODO 活动内容表单添加
 # TODO 根据班号和导师自动推断党支部有问题吧
-# TODO 分页显示活动
+# TODO 分页显示内容
 # TODO 导出activity名单
 # TODO 党员列表添加筛选功能
 # TODO 党员统计信息概览
-
+# TODO 把注册移到main_site里
 # TODO 数据只由学号确认就行了
