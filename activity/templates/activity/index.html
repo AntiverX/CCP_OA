@@ -120,17 +120,21 @@
     <div class="container mt-3">
         {% for result in results %}
             <div class="card mt-3">
-                <h6 class="card-header bg-white">{{ result.activity_name }} <span class="badge {% if result.is_ok == True %}badge-success{% else %}badge-danger{% endif %}">活动材料{% if result.is_ok == True %}已{% else %}未{% endif %}通过审核</span></h6>
-                <div class="card-body">
-                    <h5>
-                        <span class="badge badge-info">报名时间->{{ result.joinTime|date:"Y-m-d H:i" }}</span>
-                        <span class="badge badge-info">开始时间->{{ result.activity_time|date:"Y-m-d H:i" }}</span>
-                        <span class="badge badge-info">时长->{{ result.time_length }}小时</span>
-                        <span class="badge badge-success">证明材料{% if result.proof != "" %}已{% else %}未{% endif %}提交</span>
-
-                    </h5>
+            <h6 class="card-header bg-white">{{ result.activity_name }}
+                <span class="badge {% if result.is_ok == True %}badge-success{% else %}badge-danger{% endif %}">活动材料
+                    {% if result.is_ok %}已{% else %}未{% endif %}通过审核</span></h6>
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <p class="col-12">报名时间: {{ result.joinTime|date:"Y-m-d H:i" }}</p>
+                            <p class="col-12">活动时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
+                            <p class="col-12">时长: {{ result.time_length }}小时</p>
+                            <p class="col-12">负责人: {% if result.auditor != "" %}{{result.auditor }}{% else %}无{% endif %}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endfor %}
-    </div>
+        </div>
 {% endblock %}
