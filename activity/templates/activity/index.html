@@ -2,41 +2,10 @@
 {% block content_1 %}
     <script>
         $(document).ready(function () {
-            /* 点击某一行显示修改和删除按钮 */
-            $("tbody tr").click(function () {
-                $("#target_id").val(this.title);
-                if ($("tr").hasClass("table-active")) {
-                    $("tr").removeClass("table-active");
-                }
-                $(this).addClass("table-active");
-                var target_id = $("#target_id").val();
-                var activity_name = $("tr[title=" + target_id + "]").find("td").eq(0).text();
-                var joinTime = $("tr[title=" + target_id + "]").find("td").eq(1).text();
-                var activity_time = $("tr[title=" + target_id + "]").find("td").eq(2).text();
-                var time_length = $("tr[title=" + target_id + "]").find("td").eq(3).text();
-                var proof = $("tr[title=" + target_id + "]").find("td").eq(4).text();
-                var is_ok = $("tr[title=" + target_id + "]").find("td").eq(5).text();
-                var auditor = $("tr[title=" + target_id + "]").find("td").eq(6).text();
-                $("#activity_name").val(activity_name);
-                $("#joinTime").val(joinTime);
-                $("#activity_time").val(activity_time);
-                $("#time_length").val(time_length);
-                $("#is_ok").val(is_ok);
-                $("#auditor").val(auditor);
-                $("#modify").click();
+            $(".card").click(function () {
+                $("#target_id").val($(this).attr("id"));
+                $("#modal").modal();
             });
-
-            /* 点击空白处失去选中，并清空id记录 */
-            $(document).on("click", function (e) {
-                if (1 == 1) {
-                    {#$("#target_id").val("");#}
-                    $(".operation").attr("hidden", true);
-                    if ($("tr").hasClass("table-active")) {
-                        $("tr").removeClass("table-active");
-                    }
-                }
-            });
-
         });
     </script>
     <style>
@@ -50,8 +19,8 @@
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
 
         <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -65,37 +34,6 @@
                             <input id="target_id" name="target_id" value="" hidden>
                             {% csrf_token %}
                             <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="content">活动名称</label>
-                                    <input type="text" class="date form-control" id="activity_name" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-3">
-                                    <label for="content">报名时间</label>
-                                    <input type="text" class="semester form-control" id="joinTime" readonly>
-                                </div>
-                                <div class="form-group col-3">
-                                    <label for="content">开始时间</label>
-                                    <input type="text" class="semester form-control" id="activity_time" readonly>
-                                </div>
-                                <div class="form-group col-3">
-                                    <label for="content">活动时长</label>
-                                    <input type="text" class="semester form-control" id="time_length" readonly>
-                                </div>
-                                <div class="form-group col-3">
-                                    <label for="content">审核人</label>
-                                    <input type="text" class="semester form-control" id="auditor" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="content">活动内容</label>
-                                    <textarea type="text" class="semester form-control" id="remark" readonly></textarea>
-                                </div>
-                            </div>
-                            <div class="row">
-
                                 <div class="form-group col-4">
                                     <label for="content">证明材料</label>
                                     <input type="file" class="form-control" id="proof" name="proof">
@@ -105,9 +43,8 @@
                             <hr>
                             <div class="row">
                                 <div class="form-group col-12">
-                                    <button type="submit" class="btn btn-danger" name="btn" value="save">保存</button>
-                                    <button type="submit" class="btn btn-danger ml-3" name="btn" value="quit">退出活动
-                                    </button>
+                                    <button class="btn btn-danger" name="btn" id="save" value="save">保存</button>
+                                    <button class="btn btn-danger ml-3" name="btn" value="quit">退出活动</button>
                                 </div>
                             </div>
                         </form>
@@ -119,22 +56,23 @@
 
     <div class="container mt-3">
         {% for result in results %}
-            <div class="card mt-3">
-            <h6 class="card-header bg-white">{{ result.activity_name }}
-                <span class="badge {% if result.is_ok == True %}badge-success{% else %}badge-danger{% endif %}">活动材料
-                    {% if result.is_ok %}已{% else %}未{% endif %}通过审核</span></h6>
-            <div class="card-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <p class="col-12">报名时间: {{ result.joinTime|date:"Y-m-d H:i" }}</p>
-                            <p class="col-12">活动时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
-                            <p class="col-12">时长: {{ result.time_length }}小时</p>
-                            <p class="col-12">负责人: {% if result.auditor != "" %}{{result.auditor }}{% else %}无{% endif %}</p>
+            <div class="card mt-3" id="{{ result.id }}">
+                <h6 class="card-header bg-white">{{ result.activity_name }}
+                    <span class="badge {% if result.is_ok == True %}badge-success{% else %}badge-danger{% endif %}">活动材料{% if result.is_ok %}已{% else %}未{% endif %}通过审核</span></h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <p class="col-12">报名时间: {{ result.joinTime|date:"Y-m-d H:i" }}</p>
+                                <p class="col-12">活动时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
+                                <p class="col-12">时长: {{ result.time_length }}小时</p>
+                                <p class="col-12">审核人:{% if result.auditor != "" %}{{ result.auditor }}{% else %}无{% endif %}</p>
+                                <p class="proof col-12">证明材料: {% if result.proof != "" %}<a id="file" href="{{ result.proof }}">点击下载</a>{% else %}未上传{% endif %}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
-        </div>
+    </div>
 {% endblock %}

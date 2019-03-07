@@ -58,7 +58,7 @@ def joinActivity(request):
     if request.method == "GET":
         results = Activity.objects.all()
         context['results'] = results
-        return render(request, "activity/attend_activity.html", context=context)
+        return render(request, "activity/joinactivity.html", context=context)
     else:
         target_id = request.POST['target_id']
         target_activity = Activity.objects.get(id=target_id)
@@ -133,12 +133,11 @@ def joinActivity(request):
                 return render(request, "main_site/error.html", context=context)
 
 
-# 活动列表
+# 活动管理
 @is_gxh
 def activity_manage(request):
     context = {
         'select': 'activity_manage',
-        'select_1': 'activity_list',
     }
     if request.method == 'GET':
         results = Activity.objects.all()
@@ -201,46 +200,13 @@ def audit_activity_record(request):
         record.save()
         return HttpResponse("success")
 
-
-
-# 添加活动
-@login_required
-def add_activity(request):
-    context = {
-        'select': 'activity_manage',
-        'select_1': "add_activity",
-    }
-    if request.method == 'GET':
-        return render(request, "activity/add_activity.html", context=context)
-    else:
-        activity_name = request.POST['activity_name']
-        time_length = request.POST['time_length']
-        max_person = request.POST['max_person']
-        activity_time = request.POST['activity_time']
-        close_time = request.POST['close_time']
-        new_activity = Activity.objects.create(
-            activity_name=activity_name,
-            time_length=time_length,
-            max_person=max_person,
-            activity_time=activity_time,
-            close_time=close_time,
-            content=request.POST['content'],
-            publisher=request.user.real_name,
-            person_in_charge=request.POST['person_in_charge'],
-        )
-        new_activity.save()
-        return HttpResponseRedirect("/activity/activity_list")
-
-
 # 审计时长
-def audit_record(request):
+def record_manage(request):
     context = {
         'select': 'record_manage',
         'select_1': "audit_record",
     }
     if request.method == "GET":
-        results = ActivityRecord.objects.filter(is_ok=False)
-        context['results'] = results
         context['auditor'] = request.user.real_name
         return render(request, "activity/audit_record.html", context=context)
     else:

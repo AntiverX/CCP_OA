@@ -108,7 +108,8 @@ def index(request):
         email = request.POST['email']
         file = request.FILES.get('file')
         if file is not None:
-            path = "photo/" + student_id + " - " + str(random.randint(1, 1000)) + ".jpg"
+            path = "photo/" + student_id + " - " + str(hash(file)) + ".jpg"
+            # path = "photo/" + student_id + " - " + str(random.randint(1, 1000)) + ".jpg"
             file_name = BASE_DIR + "/static/" + path
             with open(file_name.encode(), "wb+") as destination:
                 for chunk in file.chunks():

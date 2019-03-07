@@ -22,7 +22,6 @@ from activity import views
 
 urlpatterns = [
     re_path(r"^$", views.index, name="index"),
-    re_path(r"^add_activity$", views.add_activity, name="add_activity"),
     re_path(r"^get_activity$", views.get_activity),
     re_path(r"^get_activity_record$", views.get_activity_record),
     re_path(r"^activity_manage", views.activity_manage, name="activity_manage"),
@@ -30,7 +29,7 @@ urlpatterns = [
     re_path(r"^audit_activity_record/(?P<activity_name>[\w-]+)/$", views.audit_activity_record),
 
     re_path(r"joinActivity", views.joinActivity, name="joinActivity"),
-    re_path(r"^record_manage$", views.audit_record, name="record_manage"),
+    re_path(r"^record_manage$", views.record_manage, name="record_manage"),
     re_path(r"^activity_record_manage$", views.activity_record_manage, name="activity_record_manage"),
     re_path(r"^$", views.index, name="activity"),
 ]

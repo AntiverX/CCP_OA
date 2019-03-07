@@ -9,13 +9,10 @@
     <title>信息与电子学院党建信息平台</title>
 </head>
 <body>
-<style>
-    @import url("/static/js/base.css");
-    @import url("/static/js/global.css");
-    @import url("/static/js/material-design-iconic-font.min.css");
-</style>
-
-
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static "js/base.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "js/global.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "js/material-design-iconic-font.min.css" %}">
 <div class="top">
     {% load static %}
     <img class="center" src="{% static "logo_index.png" %}"/>

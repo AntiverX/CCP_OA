@@ -23,23 +23,29 @@
                 $("#activity_time").val(activity_time);
                 $("#time_length").val(time_length);
                 $("#modal").modal("show");
+                window.open($(this).find("#file").attr("href"), 'window name', 'left=500,top=300,height=500,width=500');
             });
 
             /* 提交按钮 */
             $("#submit").click(function () {
-                alert("hello");
                 data = {
                     "target_id": $("#target_id").val(),
                     "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
-                    "auditor":'{{ user.real_name }}',
+                    "auditor": '{{ user.real_name }}',
 
                 }
                 $.post("{% url 'audit_activity_record' %}", data, function (status, data) {
                     if (data == "success") {
-                        {#$(window).reload();#}
-                        console.log(data);
+                        $(window).reload();
                     }
                 })
+            });
+
+            $(document).on('click', function (e) {
+                if (e.target.tagName == "HTML" || e.target.tagName == "BODY") {
+                    $("tr").removeClass("table-active");
+                    $("#target_id").val();
+                }
             });
         });
     </script>
@@ -78,25 +84,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="target_form" >
+                    <div id="target_form">
                         <input type="hidden" id="target_id" name="target_id" value="">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="form-group col-4">
-                                <label for="content">学号</label>
-                                <input type="text" class="date form-control" id="student_id" readonly>
-                            </div>
-                            <div class="form-group col-4">
-                                <label for="content">姓名</label>
-                                <input type="text" class="date form-control" id="real_name" readonly>
-                            </div>
-                            <div class="form-group col-4">
-                                <label for="content">报名时间</label>
-                                <input type="text" class="semester form-control" id="joinTime" placeholder="例：2018-11-11 11:11" readonly>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-10">
+
+                            <div class="form-group col-6">
                                 <label for="content">活动名称</label>
                                 <input type="text" class="date form-control" id="activity_name" readonly>
                             </div>
@@ -104,18 +97,25 @@
                                 <label for="content">活动时长</label>
                                 <input type="text" class="date form-control" id="time_length" name="time_length" readonly>
                             </div>
-                        </div>
-                        <div class="row">
-
-                            <div class="form-group col-4">
+                            <div class="form-group col-3">
                                 <label for="content">活动时间</label>
                                 <input type="text" class="semester form-control" id="activity_time" readonly>
                             </div>
+
+                            <div class="form-group col-2">
+                                <label for="content">学号</label>
+                                <input type="text" class="date form-control" id="student_id" readonly>
+                            </div>
+                            <div class="form-group col-2">
+                                <label for="content">姓名</label>
+                                <input type="text" class="date form-control" id="real_name" readonly>
+                            </div>
                             <div class="form-group col-3">
-                                <label for="content">审核人</label>
-                                <input type="text" class="semester form-control" id="auditor" name="auditor" value="{{ auditor }}">
+                                <label for="content">报名时间</label>
+                                <input type="text" class="semester form-control" id="joinTime" placeholder="例：2018-11-11 11:11" readonly>
                             </div>
                         </div>
+
                         <hr>
                         <div class="row">
                             <div class="col-12">
@@ -158,9 +158,7 @@
                         <td nowrap>{{ result.activity_time|date:"Y-m-d H:i" }} </td>
                         <td nowrap>{{ result.time_length }} </td>
                         <td nowrap>{{ result.is_ok }} </td>
-                        <td nowrap>{% if result.proof != "" %}{% load static %}
-                            <div><a href="{{ result.proof }}">点击下载</a></div>{% else %}
-                            未上传{% endif %}</td>
+                        <td nowrap>{% if result.proof != "" %}<a id="file" href="{{ result.proof }}">点击下载</a>{% else %}未上传{% endif %}</td>
                         <td nowrap>{{ result.auditor }} </td>
                     </tr>
                 {% endfor %}

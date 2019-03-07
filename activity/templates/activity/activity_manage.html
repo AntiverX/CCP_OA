@@ -42,7 +42,7 @@
                 }
                 $.post("{% url 'activity_manage' %}", data, function (data) {
                     if (data == "success") {
-                        $(window).reload();
+                        window.location.reload();
                     }
                 })
             });

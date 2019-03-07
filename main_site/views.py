@@ -41,6 +41,5 @@ def setting(request):
         existing_is_closed.setting_value = is_closed
         existing_is_closed.save()
         if existing_is_closed.setting_value == "True":
-            # call_command("clearsessions")
             [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_hash') != request.user.get_session_auth_hash()]
         return HttpResponseRedirect("/system/setting")
