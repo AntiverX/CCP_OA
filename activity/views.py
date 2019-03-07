@@ -8,7 +8,7 @@ import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from CCP.common import is_teacher,is_gxh
+from CCP.common import is_teacher, is_gxh
 
 
 @login_required
@@ -135,7 +135,7 @@ def joinActivity(request):
 
 # 活动列表
 @is_gxh
-def activity_list(request):
+def activity_manage(request):
     context = {
         'select': 'activity_manage',
         'select_1': 'activity_list',
@@ -143,7 +143,7 @@ def activity_list(request):
     if request.method == 'GET':
         results = Activity.objects.all()
         context['results'] = results
-        return render(request, "activity/activity_list.html", context=context)
+        return render(request, "activity/activity_manage.html", context=context)
     else:
         if request.POST['type'] == "delete":
             existing_activity = Activity.objects.select_for_update().get(id=request.POST['id'])
@@ -152,24 +152,55 @@ def activity_list(request):
                 existing_activity.delete()
                 existing_activity_records.delete()
         else:
-            existing_activity = Activity.objects.select_for_update().get(id=request.POST['id'])
-            existing_activity_records = ActivityRecord.objects.select_for_update().filter(activity_name=existing_activity.activity_name)
-            with transaction.atomic():
-                existing_activity.activity_name = request.POST['activity_name']
-                existing_activity.time_length = request.POST['time_length']
-                existing_activity.max_person = request.POST['max_person']
-                existing_activity.activity_time = request.POST['activity_time']
-                existing_activity.close_time = request.POST['close_time']
-                existing_activity.person_in_charge = request.POST['person_in_charge']
-                existing_activity.content = request.POST['content']
-                for record in existing_activity_records:
-                    record.activity_name = request.POST['activity_name']
-                    record.time_length = request.POST['time_length']
-                    record.activity_time = request.POST['activity_time']
-                    record.close_time = request.POST['close_time']
-                    record.save()
-                existing_activity.save()
-        return HttpResponseRedirect("/activity/activity_list")
+            if request.POST['id'] is not "":
+                existing_activity = Activity.objects.select_for_update().get(id=request.POST['id'])
+                existing_activity_records = ActivityRecord.objects.select_for_update().filter(activity_name=existing_activity.activity_name)
+                with transaction.atomic():
+                    existing_activity.activity_name = request.POST['activity_name']
+                    existing_activity.time_length = request.POST['time_length']
+                    existing_activity.max_person = request.POST['max_person']
+                    existing_activity.activity_time = request.POST['activity_time']
+                    existing_activity.close_time = request.POST['close_time']
+                    existing_activity.person_in_charge = request.POST['person_in_charge']
+                    existing_activity.content = request.POST['content']
+                    for record in existing_activity_records:
+                        record.activity_name = request.POST['activity_name']
+                        record.time_length = request.POST['time_length']
+                        record.activity_time = request.POST['activity_time']
+                        record.close_time = request.POST['close_time']
+                        record.save()
+                    existing_activity.save()
+            else:
+                new_record = Activity(
+                    activity_name=request.POST['activity_name'],
+                    time_length=request.POST['time_length'],
+                    close_time=request.POST['close_time'],
+                    activity_time=request.POST['activity_time'],
+                    max_person=request.POST['max_person'],
+                    content=request.POST['content'],
+                    publisher=request.POST['publisher'],
+                    person_in_charge=request.POST['person_in_charge'],
+                )
+                new_record.save()
+        return HttpResponse("success")
+
+
+# 审计时长
+def audit_activity_record(request):
+    if request.method == "GET":
+        context = {
+            'activity_name':request.GET['activity_name'],
+            'results': ActivityRecord.objects.filter(activity_name=request.GET['activity_name']),
+        }
+        return render(request, 'activity/audit_activity_record.html', context=context)
+    else:
+        target_id = request.POST['target_id']
+        record = ActivityRecord.objects.get(id=target_id)
+        record.is_ok = 1
+        record.auditor = request.POST['auditor']
+        record.save()
+        return HttpResponse("success")
+
 
 
 # 添加活动
@@ -200,6 +231,7 @@ def add_activity(request):
         new_activity.save()
         return HttpResponseRedirect("/activity/activity_list")
 
+
 # 审计时长
 def audit_record(request):
     context = {
@@ -219,6 +251,7 @@ def audit_record(request):
         selected_record.is_ok = "是"
         selected_record.save()
         return HttpResponseRedirect("/activity/activity_record_manage")
+
 
 # 记录管理
 def activity_record_manage(request):

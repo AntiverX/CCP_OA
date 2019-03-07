@@ -47,13 +47,13 @@
                 </div>
                 <div class="row">
                     {% load static %}
-                    <img id="img" class="rounded mx-auto d-block"  src="{% static "old_style_record.jpg" %}" alt="Responsive image">
+                    <img id="img" class="rounded mx-auto d-block" src="{% static "old_style_record.jpg" %}" alt="Responsive image">
                 </div>
                 {% csrf_token %}
                 <hr>
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-danger" id="CoverRecord">覆盖</button>
+                        {#                        <button class="btn btn-danger" id="CoverRecord">覆盖</button>#}
                         <button class="btn btn-danger ml-2" id="submitRecord">追加</button>
                     </div>
                 </div>

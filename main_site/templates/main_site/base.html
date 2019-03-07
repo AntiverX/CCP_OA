@@ -11,6 +11,8 @@
 <body>
 <style>
     @import url("/static/js/base.css");
+    @import url("/static/js/global.css");
+    @import url("/static/js/material-design-iconic-font.min.css");
 </style>
 
 
@@ -45,7 +47,7 @@
                 {% if user.is_gxh or user.is_teacher %}
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link {% if select == "setting" %}select{% endif %}" href="{% url 'setting' %}" >系统设置</a>
+                            <a class="nav-link {% if select == "setting" %}select{% endif %}" href="{% url 'setting' %}">系统设置</a>
                         </li>
                         {% if user.is_teacher %}
                             <li class="nav-item">

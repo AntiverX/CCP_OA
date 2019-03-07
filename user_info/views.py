@@ -39,8 +39,11 @@ def index(request):
 
         if ccp_member is not None:
             # 计算年龄
-            birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
-            age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
+            if len(ccp_member.id_number) == 18:
+                birthday = ccp_member.id_number[6:-8] + "-" + ccp_member.id_number[10:-6] + "-" + ccp_member.id_number[12:-4]
+                age = datetime.datetime.strptime(birthday, '%Y-%m-%d')
+            else:
+                age = datetime.datetime(1921,7,21)
 
             # date_2为推优日期 date_5为列为发展对象日期
             if datetime.datetime.now().year - age.year > 18:

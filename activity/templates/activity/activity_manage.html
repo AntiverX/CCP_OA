@@ -22,9 +22,13 @@
                 $("#modal").modal();
             });
 
+            $("#add").click(function () {
+                $("#modal").modal();
+            });
+
             $("#modify").click(function () {
                 var data = {
-                    "id": $("#id").val(),
+                    "id": "",
                     "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
                     "activity_name": $("#activity_name").val(),
                     "time_length": $("#time_length").val(),
@@ -32,12 +36,19 @@
                     "activity_time": $("#activity_time").val(),
                     "close_time": $("#close_time").val(),
                     "person_in_charge": $("#person_in_charge").val(),
+                    "publisher": '{{ user.real_name }}',
                     "content": $("#content").val(),
                     "type": "modify"
                 }
-                $.post("/activity/activity_list", data, function (data) {
-                    location.reload();
+                $.post("{% url 'activity_manage' %}", data, function (data) {
+                    if (data == "success") {
+                        $(window).reload();
+                    }
                 })
+            });
+
+            $("#audit").click(function () {
+                $(window).attr('location', 'audit_activity_record' + "/?activity_name=" + $("#activity_name").val());
             });
 
             $("#delete").click(function () {
@@ -53,28 +64,12 @@
                     "content": $("#content").val(),
                     "type": "delete"
                 }
-                $.post("/activity/activity_list", data, function (data) {
+                $.post("{% url 'activity_manage' %}", data, function (data) {
                     location.reload();
                 })
             });
         });
     </script>
-
-    <!-- 二级菜单 -->
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <ul class="navbar-nav" style="flex-direction: row;">
-                <li class="nav-item ">
-                    <a class="nav-link {% if select_1 == "activity_list" %}select{% endif %}" href="{% url "activity_list" %}">活动列表</a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link {% if select_1 == "add_activity" %}select{% endif %}" href="{% url "add_activity" %}">添加活动</a>
-                </li>
-            </ul>
-        </nav>
-        <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
-    </div>
-
     <!-- Modal -->
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
@@ -126,6 +121,7 @@
                     <div class="row">
                         <div class="col-12">
                             <button id="modify" class="btn btn-danger">提交</button>
+                            <button id="audit" class="btn btn-danger ml-2">审核记录</button>
                             <button id="delete" class="btn btn-danger ml-2">删除</button>
                         </div>
                     </div>
@@ -168,4 +164,17 @@
             </table>
         </div>
     </div>
+
+    <!-- 右下角添加按钮 -->
+    <style>
+        #add {
+            bottom: 8rem;
+            right: 28rem;
+            position: fixed;
+        }
+    </style>
+    <a class="deploy_floating add_table_content" id="add">
+        <span class="fonticon_plus"></span>
+    </a>
+    <!-- 右下角添加按钮结束 -->
 {% endblock %}
