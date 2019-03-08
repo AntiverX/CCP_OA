@@ -8,14 +8,19 @@
     </style>
     <script>
         $(document).ready(function () {
+            active_record = "";
             $("tr").click(function () {
-                $("#id").val($(this).attr("id"));
+                active_record = $(this).attr("id");
                 $.post("/activity/get_activity", {"id": $(this).attr("id")}, function (data) {
                     $("#activity_name").val(data.activity_name);
                     $("#time_length").val(data.time_length);
                     $("#max_person").val(data.max_person);
-                    $("#activity_time").val(data.activity_time);
-                    $("#close_time").val(data.close_time);
+                    var date_time = data.activity_time.split(" ");
+                    var new_date_time = date_time[0] + "T" + date_time[1];
+                    $("#activity_time").val(new_date_time);
+                    var date_time = data.close_time.split(" ");
+                    var new_date_time = date_time[0] + "T" + date_time[1];
+                    $("#close_time").val(new_date_time);
                     $("#person_in_charge").val(data.person_in_charge);
                     $("#content").val(data.content);
                 })
@@ -28,7 +33,7 @@
 
             $("#modify").click(function () {
                 var data = {
-                    "id": "",
+                    "id": active_record,
                     "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
                     "activity_name": $("#activity_name").val(),
                     "time_length": $("#time_length").val(),
@@ -53,7 +58,7 @@
 
             $("#delete").click(function () {
                 var data = {
-                    "id": $("#id").val(),
+                    "id": active_record,
                     "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
                     "activity_name": $("#activity_name").val(),
                     "time_length": $("#time_length").val(),
@@ -100,11 +105,11 @@
                     <div class="row">
                         <div class="form-group col-4">
                             <label for="content">活动开始时间</label>
-                            <input type="text" class="semester form-control" id="activity_time" name="activity_time" placeholder="例：2018-11-11 11:11" required>
+                            <input type="datetime-local" class="semester form-control" id="activity_time" name="activity_time" placeholder="例：2018-11-11 11:11" required>
                         </div>
                         <div class="form-group col-4">
                             <label for="content">报名截止时间</label>
-                            <input type="text" class="semester form-control" id="close_time" name="close_time" placeholder="例：2018-11-11 11:11" required>
+                            <input type="datetime-local" class="semester form-control" id="close_time" name="close_time" placeholder="例：2018-11-11 11:11" required>
                         </div>
                         <div class="form-group col-2">
                             <label for="person_in_charge">负责人</label>
