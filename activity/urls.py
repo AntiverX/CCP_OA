@@ -29,7 +29,7 @@ urlpatterns = [
     re_path(r"^audit_activity_record/(?P<activity_name>[\w-]+)/$", views.audit_activity_record),
 
     re_path(r"joinActivity", views.joinActivity, name="joinActivity"),
+    # re_path(r"^record_manage$", views.record_manage, name="record_manage"),
     re_path(r"^record_manage$", views.record_manage, name="record_manage"),
-    re_path(r"^activity_record_manage$", views.activity_record_manage, name="activity_record_manage"),
     re_path(r"^$", views.index, name="activity"),
 ]

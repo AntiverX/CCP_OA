@@ -6,7 +6,25 @@
                 $("#target_id").val($(this).attr("id"));
                 $("#modal").modal();
             });
+
+            $("#quit").click(function (event) {
+                event.preventDefault();
+                var data = {
+                    "target_id": $("#target_id").val(),
+                    "btn": "quit",
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                }
+                $.post("", data, function (data, status) {
+                    $("#response_modal_title").text(data.title);
+                    $("#response_modal_prompt").text(data.content);
+                    $("#response_modal").modal("show");
+                })
+            });
+            $('#response_modal').on('hidden.bs.modal', function (e) {
+                location.reload();
+            })
         });
+
     </script>
     <style>
         .modal-dialog.modal-800 {
@@ -30,7 +48,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" enctype="multipart/form-data">
+                        <form id="form" method="POST" enctype="multipart/form-data">
                             <input id="target_id" name="target_id" value="" hidden>
                             {% csrf_token %}
                             <div class="row">
@@ -44,7 +62,7 @@
                             <div class="row">
                                 <div class="form-group col-12">
                                     <button class="btn btn-danger" name="btn" id="save" value="save">保存</button>
-                                    <button class="btn btn-danger ml-3" name="btn" value="quit">退出活动</button>
+                                    <button class="btn btn-danger ml-3" name="btn" id="quit">退出活动</button>
                                 </div>
                             </div>
                         </form>
@@ -52,6 +70,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Response Modal -->
+        <div class="modal fade" id="response_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="response_modal_title">参加活动</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-12" id="response_modal_prompt">请确认是否参加此次活动！</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End for Response Modal -->
     </div>
 
     <div class="container mt-3">

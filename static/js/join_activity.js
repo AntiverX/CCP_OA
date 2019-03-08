@@ -14,13 +14,14 @@ $(document).ready(function () {
 
     /* 点击某一行显示修改和删除按钮 */
     $(".card").click(function () {
-        if ($(this).children("h6").text().search("你已参加此活动") == -1) {
-            action = "join"
-        } else {
-            $("#prompt").text("请确认是否退出此活动")
-            $("#submit").text("退出");
-            action = "quit"
-        }
+        // if ($(this).children("h6").text().search("你已参加此活动") == -1) {
+        action = "join"
+        // }
+        // else {
+        //     $("#prompt").text("请确认是否退出此活动")
+        //     $("#submit").text("退出");
+        //     action = "quit"
+        // }
         $('#modal').modal();
         console.log($('#modal').modal().text());
         target_id = $(this).attr("id");

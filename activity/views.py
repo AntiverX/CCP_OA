@@ -37,12 +37,26 @@ def index(request):
         else:
             # 用户退出活动
             if request.POST['btn'] == "quit":
-                activity_name = selected_record.activity_name
-                selected_record.delete()
+                selected_record = ActivityRecord.objects.select_for_update().get(id=target_id)
+                selected_activity = Activity.objects.select_for_update().get(activity_name=selected_record.activity_name)
                 with transaction.atomic():
-                    selected_activity = Activity.objects.get(activity_name=activity_name)
-                    selected_activity.present_person = selected_activity.present_person - 1
-                    selected_activity.save()
+                    if selected_activity.close_time > datetime.datetime.now():
+                        selected_record.delete()
+                        selected_activity.present_person = selected_activity.present_person - 1
+                        selected_activity.save()
+                        return JsonResponse(
+                            {
+                                'title': "退出成功",
+                                'content': "已退出该活动"
+                            }
+                        )
+                    else:
+                        return JsonResponse(
+                            {
+                                'title': "退出失败",
+                                'content': "已经过了可退出时间"
+                            }
+                        )
             else:
                 pass
         return HttpResponseRedirect("/activity/")
@@ -105,32 +119,6 @@ def joinActivity(request):
                     'content': "你已经报名成功"
                 }
             )
-        # 退出活动
-        else:
-            if datetime.datetime.now() > target_activity.close_time:
-                return JsonResponse(
-                    {
-                        'title': "退出失败",
-                        'content': "已经过了报名时间"
-                    }
-                )
-            try:
-                existing_record = ActivityRecord.objects.get(activity_name=target_activity.activity_name, student_id=request.user.student_id)
-                target_activity = Activity.objects.select_for_update().get(id=target_id)
-                with transaction.atomic():
-                    target_activity.present_person = target_activity.present_person - 1
-                    target_activity.save()
-                existing_record.delete()
-                return JsonResponse(
-                    {
-                        'title': "退出成功",
-                        'content': "你已经退出该活动"
-                    }
-                )
-            except ObjectDoesNotExist:
-                context["error"] = "你没有参加这个活动"
-                context["return_url"] = "joinActivity"
-                return render(request, "main_site/error.html", context=context)
 
 
 # 活动管理
@@ -188,7 +176,7 @@ def activity_manage(request):
 def audit_activity_record(request):
     if request.method == "GET":
         context = {
-            'activity_name':request.GET['activity_name'],
+            'activity_name': request.GET['activity_name'],
             'results': ActivityRecord.objects.filter(activity_name=request.GET['activity_name']),
         }
         return render(request, 'activity/audit_activity_record.html', context=context)
@@ -200,27 +188,9 @@ def audit_activity_record(request):
         record.save()
         return HttpResponse("success")
 
-# 审计时长
-def record_manage(request):
-    context = {
-        'select': 'record_manage',
-        'select_1': "audit_record",
-    }
-    if request.method == "GET":
-        context['auditor'] = request.user.real_name
-        return render(request, "activity/audit_record.html", context=context)
-    else:
-        target_id = request.POST['target_id']
-        auditor = request.POST['auditor']
-        selected_record = ActivityRecord.objects.get(id=target_id)
-        selected_record.auditor = auditor
-        selected_record.is_ok = "是"
-        selected_record.save()
-        return HttpResponseRedirect("/activity/activity_record_manage")
-
 
 # 记录管理
-def activity_record_manage(request):
+def record_manage(request):
     context = {
         'select': 'record_manage',
         'select_1': "activity_record_manage",
@@ -229,7 +199,7 @@ def activity_record_manage(request):
         results = ActivityRecord.objects.filter(is_ok=False)
         context['results'] = results
         context['auditor'] = request.user.real_name
-        return render(request, "activity/activity_record_manage.html", context=context)
+        return render(request, "activity/record_manage.html", context=context)
     else:
         file = request.FILES.get('file')
         # 上传活动时长记录
@@ -277,7 +247,7 @@ def activity_record_manage(request):
 
                         )
                         new_activity_record.save()
-        return HttpResponseRedirect("/activity/activity_record_manage")
+        return HttpResponseRedirect("/activity/record_manage")
 
 
 # 获取单次活动信息
