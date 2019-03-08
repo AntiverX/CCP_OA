@@ -25,6 +25,13 @@ def index(request):
     else:
         target_id = request.POST['target_id']
         selected_record = ActivityRecord.objects.get(id=target_id)
+        if selected_record.activity_time > datetime.datetime.now():
+            return JsonResponse(
+                {
+                    'title': "提交失败",
+                    'content': "活动还未开始！"
+                }
+            )
         file = request.FILES.get('proof')
         if file is not None:
             path = "/static/file/" + request.user.student_id + " - " + selected_record.activity_name + "." + file.name.split(".")[1]

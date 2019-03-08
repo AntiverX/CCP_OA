@@ -5,3 +5,4 @@ from django.db import models
 class Setting(models.Model):
     setting_name = models.TextField(unique=True)
     setting_value = models.TextField()
+
