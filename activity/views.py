@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 from CCP.common import is_teacher, is_gxh
+from main_site.models import Semester
 
 
 @login_required
@@ -19,9 +20,19 @@ def index(request):
         "select_1": "index",
     }
     if request.method == "GET":
-        results = ActivityRecord.objects.filter(student_id=request.user.student_id)
-        context['results'] = results
-        return render(request, "activity/index.html", context=context)
+        if "semester_id" in request.GET:
+            semester = Semester.objects.get(id=request.GET['semester_id'])
+            results = ActivityRecord.objects.filter(student_id=request.user.student_id) \
+                .filter(activity_time__gte=datetime.datetime(semester.semester_start_time.year, semester.semester_start_time.month, semester.semester_start_time.day)) \
+                .filter(activity_time__lte=datetime.datetime(semester.semester_end_time.year, semester.semester_end_time.month, semester.semester_end_time.day))
+            context['results'] = results
+            context['semesters'] = Semester.objects.all().order_by('-semester_start_time')
+            return render(request, "activity/index.html", context=context)
+        else:
+            results = ActivityRecord.objects.filter(student_id=request.user.student_id)
+            context['results'] = results
+            context['semesters'] = Semester.objects.all().order_by('-semester_start_time')
+            return render(request, "activity/index.html", context=context)
     else:
         target_id = request.POST['target_id']
         selected_record = ActivityRecord.objects.get(id=target_id)

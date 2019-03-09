@@ -9,9 +9,13 @@ class Activity(models.Model):
     publishTime = models.DateTimeField('发布时间', auto_now=True)
     close_time = models.DateTimeField('报名截止时间')
     activity_time = models.DateTimeField('活动开始时间')
-    present_person = models.IntegerField('报名人数',default=0)
+    present_person = models.IntegerField('报名人数', default=0)
     max_person = models.IntegerField('最大人数')
     content = models.TextField(default="")
+    # 素质拓展时长
+    allow_normal = models.BooleanField()
+    # 党员实践时长
+    allow_ccp = models.BooleanField()
     publisher = models.CharField('发布人', max_length=100)
     person_in_charge = models.TextField(default="")
 

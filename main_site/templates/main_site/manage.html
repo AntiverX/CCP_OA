@@ -1,38 +1,185 @@
 {% extends "main_site/base.html" %}
 {% block content %}
+    {% load static %}
+    {#    <script type="text/babel" src="{% static "js/manage/get_content.js" %}"></script>#}
     <script>
-    $(document).ready(function () {
-        $("#close").click(function (event) {
-            event.preventDefault();
-            var is_closed = $("#is_closed").val();
-            if(is_closed == "True")
-                $("#is_closed").val("False");
-            else
-                $("#is_closed").val("True");
-            $("#form").submit();
+        $(document).ready(function () {
+            $("#close").click(function (event) {
+                event.preventDefault();
+                var is_closed = $("#is_closed").val();
+                if (is_closed == "True")
+                    $("#is_closed").val("False");
+                else
+                    $("#is_closed").val("True");
+                $("#form").submit();
+            });
+
+            /* 添加新学期 */
+            $("#add_semester").click(function () {
+                active_table = "";
+                $("#delete").attr('hidden', true);
+                $("#type").val("add");
+                $("#modal").modal("show");
+            });
+
+            /* 点击某行 */
+            $("tbody tr").click(function () {
+                active_table = this.id;
+                $("#type").val("modify");
+                $("#form").find("#semester_name").val($(this).find("#semester_name").text());
+                $("#form").find("#semester_start_time").val($(this).find("#semester_start_time").text());
+                $("#form").find("#semester_end_time").val($(this).find("#semester_end_time").text());
+                $("#submit_semester").text("修改");
+                $('#modal').modal();
+            });
+            /* 删除学期 */
+            $("#delete").click(function () {
+                var data = {
+                    'target_id': active_table,
+                    'type': "delete",
+                    "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
+                }
+                $.post("semester", data, function (data, status) {
+                    if (status == "success") {
+                        $("#response_modal_title").text(data.title);
+                        $("#response_modal_prompt").text(data.content);
+                        $("#response_modal").modal("show");
+                    }
+                });
+            });
+
+            /* 添加和修改学期 */
+            $("#submit_semester").click(function () {
+                var data = {
+                    'target_id': active_table,
+                    'type': $("#type").val(),
+                    'semester_name': $("#semester_name").val(),
+                    'semester_start_time': $("#semester_start_time").val(),
+                    'semester_end_time': $("#semester_end_time").val(),
+                    "csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val(),
+                }
+                $.post("semester", data, function (data, status) {
+                    if (status == "success") {
+                        $("#response_modal_title").text(data.title);
+                        $("#response_modal_prompt").text(data.content);
+                        $("#response_modal").modal("show");
+                    }
+                });
+            });
+
+            /* 关闭回复modal后刷新页面 */
+            $('#response_modal').on('hidden.bs.modal', function (e) {
+                location.reload();
+            })
         });
-    });
     </script>
     <div class="container header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link {% if select == "setting" %}select{% endif %}" data-toggle="modal" href="#exampleModalCenter">普通设置</a>
+                    <a class="nav-link {% if select == "setting" %}select{% endif %}">普通设置</a>
                 </li>
             </ul>
         </nav>
         <hr style="margin:0 !important; border:none;border-top:4px solid #cc1c25;"/>
 
+        <!-- Modal -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-800 modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title">添加学期</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="form">
+                        {% csrf_token %}
+                        <input type="hidden" class="" id="type" name="type" required>
+                        <div class="row">
+                            <div class="form-group col-3">
+                                <label for="semester_name">学期名称</label>
+                                <input type="text" class="date form-control" id="semester_name" name="semester_name" required>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="semester_start_time">开始时间</label>
+                                <input type="date" class="date form-control" id="semester_start_time" name="semester_start_time" required>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="semester_end_time">结束时间</label>
+                                <input type="date" class="date form-control" id="semester_end_time" name="semester_end_time" required>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button id="submit_semester" class="btn btn-danger">提交</button>
+                                <button id="delete" class="btn btn-danger ml-2">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End for Modal -->
+        <!-- Response Modal -->
+        <div class="modal fade" id="response_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="response_modal_title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-12" id="response_modal_prompt">请确认是否参加此次活动！</div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End for Response Modal -->
+
         <div class="container mt-3">
             <div class="row">
-                <div class="col-4">
+                <div class="col-6">
                     <form method="post" id="form">
                         {% csrf_token %}
-                        <input id="is_closed" name="is_closed" value="{{is_closed }}" hidden>
+                        <input id="is_closed" name="is_closed" value="{{ is_closed }}" hidden>
                         <button type="submit" id="close" class="btn btn-danger">{% if is_closed == "False" %}关闭网站{% else %}开启网站{% endif %}</button>
                     </form>
                 </div>
-
+                <div class="col-6">
+                    <button id="add_semester" class="btn btn-danger">添加学期</button>
+                    <table class="table mt-2 table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">序号</th>
+                            <th scope="col">学期名称</th>
+                            <th scope="col">学期开始日期</th>
+                            <th scope="col">学期结束日期</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for semester in semesters %}
+                            <tr id="{{ semester.id }}">
+                                <td scope="row">{{ forloop.counter }}</td>
+                                <td id="semester_name">{{ semester.semester_name }}</td>
+                                <td id="semester_start_time">{{ semester.semester_start_time|date:"Y-m-d" }}</td>
+                                <td id="semester_end_time">{{ semester.semester_end_time|date:"Y-m-d" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

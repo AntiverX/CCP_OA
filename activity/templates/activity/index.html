@@ -24,6 +24,53 @@
                 location.reload();
             })
         });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            /* 点击学期的事件 */
+            $("#semester").change(function () {
+                if (($("#semester").val()) == 0) {
+                    $(window).attr("location", "/activity");
+                } else {
+                    $(window).attr("location", "?semester_id=" + $("#semester").val());
+
+                }
+            });
+
+            console.log(getUrlParameter("semester_id"));
+            if (getUrlParameter("semester_id") == undefined) {
+                $("#semester").val(0);
+            } else {
+                $("#semester").val(getUrlParameter("semester_id"));
+            }
+
+            function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+            };
+        });
+    </script>
+
+    <script>
+        /* 计算总时长 */
+        $(document).ready(function () {
+            var total_length = 0;
+            $(".time_length").each(function () {
+                total_length += Number($(this).attr('value'));
+            });
+            $("#total_time").text("本学期你的时长为" + total_length + "小时。");
+        });
 
     </script>
     <style>
@@ -99,6 +146,23 @@
     </div>
 
     <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <select class="form-control" id="semester">
+                    <option value="0">全部</option>
+                    {% for semester in semesters %}
+                        <option value="{{ semester.id }}">{{ semester.semester_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12" style="margin-top:1rem;">
+
+                <div id="total_time"></div>
+
+            </div>
+        </div>
         {% for result in results %}
             <div class="card mt-3" id="{{ result.id }}">
                 <h6 class="card-header bg-white">{{ result.activity_name }}
@@ -108,8 +172,8 @@
                         <div class="row">
                             <div class="col-xl-6">
                                 <p class="col-12">报名时间: {{ result.joinTime|date:"Y-m-d H:i" }}</p>
-                                <p class="col-12">活动时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
-                                <p class="col-12">时长: {{ result.time_length }}小时</p>
+                                <p class="activity_time col-12">活动时间: {{ result.activity_time|date:"Y-m-d H:i" }}</p>
+                                <p class="time_length col-12" value="{{ result.time_length }}">时长: {{ result.time_length }}小时</p>
                                 <p class="col-12">审核人:{% if result.auditor != "" %}{{ result.auditor }}{% else %}无{% endif %}</p>
                                 <p class="proof col-12">证明材料: {% if result.proof != "" %}<a id="file" href="{{ result.proof }}">点击下载</a>{% else %}未上传{% endif %}</p>
                             </div>
